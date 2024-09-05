@@ -1,7 +1,6 @@
 class API::V1::UsersController < ApplicationController
   respond_to :json
-  before_action :set_user, only: [:show, :update]
-  before_action :authenticate_user! 
+  before_action :set_user, only: [:show, :update, :friendships, :create_friendship]
   
   def index
     @users = User.includes(:reviews, :address).all   
@@ -30,6 +29,10 @@ class API::V1::UsersController < ApplicationController
   end
 
   def friendships
+    if @user.nil?
+      render json: { error: 'User not found' }, status: :not_found
+      return
+    end
     @friends = @user.friends
     render json: @friends, status: :ok
   end
