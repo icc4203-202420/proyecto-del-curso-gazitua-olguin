@@ -8,8 +8,10 @@ class API::V1::BeersController < ApplicationController
 
   # GET /beers
   def index
-    @beers = Beer.all
-    render json: { beers: @beers }, status: :ok
+    @beers = Beer.includes(:brand).all
+    render json: { 
+      beers: @beers.as_json(include: { brand: { only: [:name] } })
+    }, status: :ok
   end
 
   # def index

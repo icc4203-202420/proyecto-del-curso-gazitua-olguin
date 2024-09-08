@@ -1,14 +1,18 @@
 class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
-
   respond_to :json
   before_action :set_event, only: [:show, :update, :destroy]
   before_action :verify_jwt_token, only: [:create, :update, :destroy]
 
   def index
-    @events = Event.all
-    render json: { event: @events }, status: :ok
+    if params[:bar_id]
+      @bar = Bar.find(params[:bar_id])
+      @events = @bar.events
+    else
+      @events = Event.all
+    end
+    render json: { events: @events }, status: :ok
   end
 
   def show
