@@ -1,43 +1,66 @@
-import React, { useState } from 'react';
-import { Container, TextField, Button, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Container, Typography, TextField, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
+import { debounce } from 'lodash';
 
-const SearchUser = () => {
-  const [handle, setHandle] = useState('');  
-  const [submittedHandle, setSubmittedHandle] = useState('');  
+function SearchUser() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = () => {
-    setSubmittedHandle(handle);  
+  const searchUsers = async (query) => {
+    if (query.trim() === '') {
+      setUsers([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/v1/users/search?query=${query}`);
+      setUsers(response.data.users);
+    } catch (error) {
+      console.error('Error searching users:', error);
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debouncedSearch = debounce(searchUsers, 300);
+
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+    return () => debouncedSearch.cancel();
+  }, [searchTerm]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
   };
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Buscar Usuario por Handle</Typography>
-
+      <Typography variant="h4" gutterBottom>Search Users</Typography>
       <TextField
-        label="Ingresar Handle"
-        variant="outlined"
         fullWidth
-        value={handle}
-        onChange={(e) => setHandle(e.target.value)}  
-        style={{ marginBottom: '20px' }}
+        label="User handle"
+        variant="outlined"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        margin="normal"
       />
-
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleSearch} 
-        disabled={!handle}  
-      >
-        Buscar
-      </Button>
-
-      {submittedHandle && (
-        <Typography variant="h6" style={{ marginTop: '20px' }}>
-          Resultado de búsqueda: {submittedHandle}
-        </Typography>
+      {loading && <CircularProgress />}
+      <List>
+        {users.map(user => (
+          <ListItem key={user.id}>
+            <ListItemText primary={user.handle} secondary={`${user.first_name} ${user.last_name}`} />
+          </ListItem>
+        ))}
+      </List>
+      {searchTerm && !loading && users.length === 0 && (
+        <Typography>No users found</Typography>
       )}
     </Container>
   );
-};
+}
 
 export default SearchUser;

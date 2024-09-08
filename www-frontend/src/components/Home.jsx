@@ -1,53 +1,22 @@
+// Home.jsx
 import React from 'react';
+import { Container, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Button, Container, Box, Typography } from '@mui/material';
 
-const Home = () => {
+
+function Home() {
   return (
-    <Container maxWidth="md">
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom>
-          Bienvenido a BeerApp
-        </Typography>
-        <Typography variant="h6" component="p" gutterBottom>
-          Explora las mejores cervezas y bares cercanos. Participa en eventos y busca usuarios.
-        </Typography>
+    <Container maxWidth="lg" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Typography variant="h2" component="h1" gutterBottom sx={{ fontSize: { xs: '2rem', sm: '3rem', md: '4rem' } }}>
+        Welcome to Beer App
+      </Typography>
 
-        {/* Botones para la navegación */}
-        <Box sx={{ mt: 4 }}>
-          <Button
-            component={Link}
-            to="/beers"
-            variant="contained"
-            color="primary"
-            sx={{ mr: 2 }}
-          >
-            Ver Cervezas
-          </Button>
-          <Button
-            component={Link}
-            to="/bars"
-            variant="contained"
-            color="secondary"
-          >
-            Ver Bares
-          </Button>
-        </Box>
+      <Button variant="contained" color="primary" size="large" component={Link} to="/beers">
+        View Beers
+      </Button>
 
-        <Box sx={{ mt: 2 }}>
-          <Button
-            component={Link}
-            to="/search-users"
-            variant="outlined"
-            color="primary"
-          >
-            Buscar Usuario
-          </Button>
-        </Box>
-      </Box>
     </Container>
   );
-};
+}
 
 export default Home;
-
