@@ -80,6 +80,11 @@ function BeerDetails() {
 
           <Divider sx={{ my: 2 }} />
 
+          <Typography variant="h6" gutterBottom>Rating promedio:</Typography>
+          <Typography>{beer.avg_rating ? `${beer.avg_rating}/5` : 'No disponible'}</Typography>
+
+          <Divider sx={{ my: 2 }} />
+
           <Typography variant="h6" gutterBottom>Bares que la sirven:</Typography>
           <List>
             {beer.bars?.map(bar => (
