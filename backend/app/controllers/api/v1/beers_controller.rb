@@ -28,13 +28,14 @@ class API::V1::BeersController < ApplicationController
     # Obtenemos la cervecería a través de la marca (brand) manualmente
     brewery = @beer.brand.brewery
   
-    # Construimos la respuesta JSON incluyendo manualmente la cervecería
+    # Construimos la respuesta JSON incluyendo manualmente la cervecería y el rating promedio
     beer_data = @beer.as_json(include: {
       brand: { only: [:name] },
       bars: { only: [:name] }
     })
   
     beer_data[:brewery] = { name: brewery.name } if brewery.present?
+    beer_data[:avg_rating] = @beer.avg_rating # Incluimos el rating promedio
   
     if @beer.image.attached?
       beer_data.merge!({
@@ -45,6 +46,7 @@ class API::V1::BeersController < ApplicationController
   
     render json: { beer: beer_data }, status: :ok
   end
+  
   
   
 
