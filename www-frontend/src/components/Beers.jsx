@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Typography, TextField, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Typography, TextField, Grid, Card, CardContent, CardMedia } from '@mui/material';
 
 function Beers() {
   const [beers, setBeers] = useState([]);
@@ -42,6 +43,15 @@ function Beers() {
               <CardContent>
                 <Typography variant="h5">{beer.name}</Typography>
                 <Typography color="textSecondary">{beer.style}</Typography>
+                <Button 
+                  component={Link} 
+                  to={`/beers/${beer.id}`} 
+                  variant="contained" 
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Ver más
+                </Button>
               </CardContent>
             </Card>
           </Grid>

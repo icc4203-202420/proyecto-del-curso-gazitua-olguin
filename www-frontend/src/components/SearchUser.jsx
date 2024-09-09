@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Typography, TextField, List, ListItem, ListItemText, CircularProgress } from '@mui/material';
 import { debounce } from 'lodash';
@@ -31,6 +31,7 @@ function SearchUser() {
   useEffect(() => {
     debouncedSearch(searchTerm);
     return () => debouncedSearch.cancel();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
   const handleSearchChange = (event) => {

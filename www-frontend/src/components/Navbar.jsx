@@ -1,8 +1,36 @@
-import React from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../api';
 
-function Navbar() {
+// eslint-disable-next-line react/prop-types
+function Navbar({ setIsAuthenticated }) {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        setIsAuthenticated(false);
+        navigate('/signin');
+        return;
+      }
+      await api.delete('/logout', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      localStorage.removeItem('token');
+      setIsAuthenticated(false);
+      navigate('/signin');
+    } catch (error) {
+      console.error('Logout error:', error);
+      localStorage.removeItem('token');
+      setIsAuthenticated(false);
+      navigate('/signin');
+    }
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -13,6 +41,7 @@ function Navbar() {
         <Button color="inherit" component={Link} to="/beers">Beers</Button>
         <Button color="inherit" component={Link} to="/bars">Bars</Button>
         <Button color="inherit" component={Link} to="/search-users">Search Users</Button>
+        <Button color="inherit" onClick={handleLogout}>Logout</Button>
       </Toolbar>
     </AppBar>
   );

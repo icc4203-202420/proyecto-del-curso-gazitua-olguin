@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Typography, List, ListItem, ListItemText } from '@mui/material';
 
 function Events() {
   const [events, setEvents] = useState([]);
-  const { id } = useParams();
+  const { barId } = useParams();
 
   useEffect(() => {
-    axios.get(`/api/v1/bars/${id}/events`)
+    axios.get(`/api/v1/bars/${barId}/events`)
       .then(response => setEvents(response.data.events))
       .catch(error => console.error('Error fetching events:', error));
-  }, [id]);
+  }, [barId]);
 
   return (
     <Container>
