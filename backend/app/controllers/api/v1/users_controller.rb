@@ -38,7 +38,10 @@ class API::V1::UsersController < ApplicationController
     render json: { users: @users }, status: :ok
   end
 
-
+  def current
+    render json: UserSerializer.new(current_user).serializable_hash[:data][:attributes], status: :ok
+  end
+  
   def friendships
     if @user.nil?
       render json: { error: 'User not found' }, status: :not_found
