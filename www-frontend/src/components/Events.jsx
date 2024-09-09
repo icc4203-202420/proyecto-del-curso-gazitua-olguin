@@ -1,55 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, List, ListItem, ListItemText, Typography } from '@mui/material';
+import axios from 'axios';
+import { Container, Typography, List, ListItem, ListItemText } from '@mui/material';
 
-const BarEvents = () => {
-  const { id } = useParams();            
-  const [events, setEvents] = useState([]);  
-  const [loading, setLoading] = useState(true);  
-  const [error, setError] = useState(null);  
+function Events() {
+  const [events, setEvents] = useState([]);
+  const { barId } = useParams();
 
   useEffect(() => {
-    axios.get(`/api/v1/bar/${id}/events`)
-      .then(response => {
-        setEvents(response.data);  
-        setLoading(false);         
-      })
-      .catch(err => {
-        setError('Error fetching events');
-        setLoading(false);
-        console.error('Error fetching events:', err);
-      });
-  }, [id]);  
-
-  if (error) {
-    return <Typography variant="h6" color="error">{error}</Typography>;
-  }
+    axios.get(`/api/v1/bars/${barId}/events`)
+      .then(response => setEvents(response.data.events))
+      .catch(error => console.error('Error fetching events:', error));
+  }, [barId]);
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Eventos del Bar</Typography>
-
-      {loading ? (
-        <Typography variant="h6">Cargando eventos...</Typography>
-      ) : (
-        <List>
-          {events.length > 0 ? (
-            events.map(event => (
-              <ListItem key={event.id}>
-                <ListItemText 
-                  primary={event.name} 
-                  secondary={`Fecha: ${event.date} - Hora: ${event.time}`} 
-                />
-              </ListItem>
-            ))
-          ) : (
-            <Typography variant="h6">No se encontraron eventos para este bar</Typography>
-          )}
-        </List>
-      )}
+      <Typography variant="h4" gutterBottom>Events</Typography>
+      <List>
+        {events.map(event => (
+          <ListItem key={event.id}>
+            <ListItemText
+              primary={event.name}
+              secondary={new Date(event.date).toLocaleDateString()}
+            />
+          </ListItem>
+        ))}
+      </List>
     </Container>
   );
-};
+}
 
-export default BarEvents;
+export default Events;

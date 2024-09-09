@@ -1,68 +1,64 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Typography, TextField, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, TextField, List, ListItem, ListItemText, Typography } from '@mui/material';
 
-const Beers = () => {
-  const [beers, setBeers] = useState([]);       
-  const [search, setSearch] = useState('');     
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null);     
+function Beers() {
+  const [beers, setBeers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     axios.get('/api/v1/beers')
-      .then(response => {
-        setBeers(response.data);  
-        setLoading(false);        
-      })
-      .catch(err => {
-        setError('Error fetching beers');
-        setLoading(false);
-        console.error('Error fetching beers:', err);
-      });
-  }, []);  
+      .then(response => setBeers(response.data.beers))
+      .catch(error => console.error('Error fetching beers:', error));
+  }, []);
 
   const filteredBeers = beers.filter(beer =>
-    beer.name.toLowerCase().includes(search.toLowerCase())
+    beer.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-  };
-
-  if (error) {
-    return <Typography variant="h6" color="error">{error}</Typography>;
-  }
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Listado de Cervezas</Typography>
-
+      <Typography variant="h4" gutterBottom>Beers</Typography>
       <TextField
-        label="Buscar Cervezas"
-        variant="outlined"
         fullWidth
-        onChange={handleSearch}
-        value={search}
-        style={{ marginBottom: '20px' }}
+        label="Search beers"
+        variant="outlined"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        margin="normal"
       />
-
-      {loading ? (
-        <Typography variant="h6">Cargando cervezas...</Typography>
-      ) : (
-        <List>
-          {filteredBeers.length > 0 ? (
-            filteredBeers.map(beer => (
-              <ListItem key={beer.id}>
-                <ListItemText primary={beer.name} secondary={beer.description} />
-              </ListItem>
-            ))
-          ) : (
-            <Typography variant="h6">No se encontraron cervezas</Typography>
-          )}
-        </List>
-      )}
+      <Grid container spacing={3}>
+        {filteredBeers.map(beer => (
+          <Grid item xs={12} sm={6} md={4} key={beer.id}>
+            <Card>
+              {beer.image_url && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={beer.image_url}
+                  alt={beer.name}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h5">{beer.name}</Typography>
+                <Typography color="textSecondary">{beer.style}</Typography>
+                <Button 
+                  component={Link} 
+                  to={`/beers/${beer.id}`} 
+                  variant="contained" 
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Ver más
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
-};
+}
 
 export default Beers;

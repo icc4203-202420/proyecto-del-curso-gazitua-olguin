@@ -1,69 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, TextField, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Container, Typography, TextField, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-const Bars = () => {
-  const [bars, setBars] = useState([]);         
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null);
-
+function Bars() {
+  const [bars, setBars] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     axios.get('/api/v1/bars')
-      .then(response => {
-        setBars(response.data);   
-        setLoading(false);        
-      })
-      .catch(err => {
-        setError('Error fetching bars');
-        setLoading(false);
-        console.error('Error fetching bars:', err);
-      });
-  }, []);  
+      .then(response => setBars(response.data.bars))
+      .catch(error => console.error('Error fetching bars:', error));
+  }, []);
 
   const filteredBars = bars.filter(bar =>
-    bar.name.toLowerCase().includes(search.toLowerCase())
+    bar.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handleSearch = (event) => {
-    setSearch(event.target.value);
-  };
-
-  if (error) {
-    return <Typography variant="h6" color="error">{error}</Typography>;
-  }
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Listado de Bares</Typography>
-
+      <Typography variant="h4" gutterBottom>Bars</Typography>
       <TextField
-        label="Buscar Bares"
-        variant="outlined"
         fullWidth
-        onChange={handleSearch}
-        value={search}
-        style={{ marginBottom: '20px' }}
+        label="Search bars"
+        variant="outlined"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        margin="normal"
       />
-
-      {loading ? (
-        <Typography variant="h6">Cargando bares...</Typography>
-      ) : (
-        <List>
-          {filteredBars.length > 0 ? (
-            filteredBars.map(bar => (
-              <ListItem key={bar.id}>
-                <ListItemText primary={bar.name} secondary={bar.address} />
-              </ListItem>
-            ))
-          ) : (
-            <Typography variant="h6">No se encontraron bares</Typography>
-          )}
-        </List>
-      )}
+      <Grid container spacing={3}>
+        {filteredBars.map(bar => (
+          <Grid item xs={12} sm={6} md={4} key={bar.id}>
+            <Card>
+              {bar.image_url && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={bar.image_url}
+                  alt={bar.name}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h5">{bar.name}</Typography>
+                <Typography color="textSecondary">{bar.address?.city}</Typography>
+                <Button component={Link} to={`/bars/${bar.id}/events`}>
+                  View Events
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
-};
+}
 
 export default Bars;
