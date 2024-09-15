@@ -8,8 +8,10 @@ class API::V1::BeersController < ApplicationController
 
   # GET /beers
   def index
-    @beers = Beer.all
-    render json: { beers: @beers }, status: :ok
+    @beers = Beer.includes(:brand).all
+    render json: { 
+      beers: @beers.as_json(include: { brand: { only: [:name] } })
+    }, status: :ok
   end
 
   # def index
@@ -21,15 +23,32 @@ class API::V1::BeersController < ApplicationController
   
   # GET /beers/:id
   def show
+    @beer = Beer.includes(:brand, :bars).find(params[:id])
+  
+    # Obtenemos la cervecería a través de la marca (brand) manualmente
+    brewery = @beer.brand.brewery
+  
+    # Construimos la respuesta JSON incluyendo manualmente la cervecería y el rating promedio
+    beer_data = @beer.as_json(include: {
+      brand: { only: [:name] },
+      bars: { only: [:name] }
+    })
+  
+    beer_data[:brewery] = { name: brewery.name } if brewery.present?
+    beer_data[:avg_rating] = @beer.avg_rating # Incluimos el rating promedio
+  
     if @beer.image.attached?
-      render json: @beer.as_json.merge({ 
-        image_url: url_for(@beer.image), 
-        thumbnail_url: url_for(@beer.thumbnail)}),
-        status: :ok
-    else
-      render json: { beer: @beer.as_json }, status: :ok
-    end 
+      beer_data.merge!({
+        image_url: url_for(@beer.image),
+        thumbnail_url: url_for(@beer.thumbnail)
+      })
+    end
+  
+    render json: { beer: beer_data }, status: :ok
   end
+  
+  
+  
 
   # POST /beers
   def create
