@@ -3,14 +3,13 @@ import { useParams } from 'react-router-dom';
 import { Container, Typography, Card, CardContent, CardMedia, List, ListItem, ListItemText, Divider, Rating, CircularProgress } from '@mui/material';
 import api from '../api';
 import BeerInfo from './BeerInfo';
-import ReviewForm from './ReviewForm';  // Importa el formulario de evaluación
+import ReviewForm from './ReviewForm';  
 
 function BeerDetails() {
   const [beer, setBeer] = useState(null);
   const [error, setError] = useState(null);
   const { id } = useParams();
 
-  // Obtener el userId desde localStorage
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
@@ -103,7 +102,7 @@ function BeerDetails() {
                 primary={
                   <>
                     <Typography component="span" variant="body2" color="text.primary">
-                      {review.user.name} (@{review.user.handle})
+                      @{review.user.handle}
                     </Typography>
                     <Rating value={Number(review.rating)} readOnly size="small" />
                   </>
