@@ -17,11 +17,18 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'users/current', to: 'users#current'
       resources :bars do
-        resources :events, only: [:index]
+        resources :events, only: [:index, :show]
       end
-      resources :beers
+      resources :beers do
+        resources :reviews, only: [:index, :create] 
+      end
       
-      resources :events
+      resources :events do
+        member do
+          post 'check_in' 
+          get 'attendees' 
+        end
+      end
       resources :users do
         member do
           get 'friendships'

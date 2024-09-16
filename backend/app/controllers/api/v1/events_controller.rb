@@ -2,8 +2,8 @@ class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
   respond_to :json
-  before_action :set_event, only: [:show, :update, :destroy]
-  before_action :verify_jwt_token, only: [:create, :update, :destroy]
+  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees]
+  before_action :verify_jwt_token, only: [:create, :update, :destroy, :check_in]
 
   def index
     if params[:bar_id]
@@ -54,6 +54,28 @@ class API::V1::EventsController < ApplicationController
       render json: @event.errors, status: :unprocessable_entity
     end
   end  
+
+  def check_in
+    attendance = Attendance.find_or_initialize_by(user: current_user, event: @event)
+    
+    if attendance.checked_in
+      render json: { message: "Ya confirmaste tu asistencia a este evento." }, status: :ok
+    else
+      attendance.check_in
+      render json: { message: "Has confirmado tu asistencia." }, status: :ok
+    end
+  end
+
+  # Listar los usuarios que han hecho check-in
+  def attendees
+    attendees = @event.users.includes(:friends)
+    friends = current_user.friends
+
+    render json: {
+      friends: attendees & friends, # Mostrar primero los amigos que asistieron
+      others: attendees - friends # El resto de asistentes que no son amigos
+    }, status: :ok
+  end
 
   private
 

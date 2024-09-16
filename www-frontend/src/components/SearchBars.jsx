@@ -19,10 +19,10 @@ function Bars() {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>Bars</Typography>
+      <Typography variant="h4" gutterBottom>Bares</Typography>
       <TextField
         fullWidth
-        label="Search bars"
+        label="Buscar bares"
         variant="outlined"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
@@ -43,8 +43,14 @@ function Bars() {
               <CardContent>
                 <Typography variant="h5">{bar.name}</Typography>
                 <Typography color="textSecondary">{bar.address?.city}</Typography>
-                <Button component={Link} to={`/bars/${bar.id}/events`}>
-                  View Events
+                <Button
+                    component={Link}
+                    to={`/bars/${bar.id}`}  
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 2 }}
+                    >
+                    Ver detalles
                 </Button>
               </CardContent>
             </Card>
