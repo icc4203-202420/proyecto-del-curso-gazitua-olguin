@@ -30,8 +30,4 @@ function Events() {
   );
 }
 
-<<<<<<< HEAD
 export default Events;
-=======
-export default Events;
->>>>>>> fa00f38a0d4ea81f3a09ea46e2811f1767a47218

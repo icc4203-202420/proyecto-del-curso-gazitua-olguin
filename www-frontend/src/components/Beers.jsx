@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-=======
 import { useState, useEffect } from 'react';
->>>>>>> fa00f38a0d4ea81f3a09ea46e2811f1767a47218
 import { Container, Typography, TextField, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from 'axios';

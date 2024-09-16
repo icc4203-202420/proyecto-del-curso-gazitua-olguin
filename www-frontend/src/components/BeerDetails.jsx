@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Typography, Card, CardContent, CardMedia, List, ListItem, ListItemText, Divider } from '@mui/material';
 import axios from 'axios';
-<<<<<<< HEAD
-import Review from './Review';
-=======
->>>>>>> fa00f38a0d4ea81f3a09ea46e2811f1767a47218
 
 function BeerDetails() {
   const [beer, setBeer] = useState(null);
@@ -102,16 +98,8 @@ function BeerDetails() {
           </List>
         </CardContent>
       </Card>
-<<<<<<< HEAD
-      <Review />
-=======
->>>>>>> fa00f38a0d4ea81f3a09ea46e2811f1767a47218
     </Container>
   );
 }
 
-<<<<<<< HEAD
 export default BeerDetails;
-=======
-export default BeerDetails;
->>>>>>> fa00f38a0d4ea81f3a09ea46e2811f1767a47218
