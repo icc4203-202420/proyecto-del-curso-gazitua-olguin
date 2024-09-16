@@ -16,9 +16,21 @@ function SignIn({ setIsAuthenticated }) {
           password: data.password
         }
       });
-      localStorage.setItem('token', response.data.token);
-      setIsAuthenticated(true);
-      navigate('/');
+      if (response.data && response.data.status && response.data.status.data) {
+        const { token, user } = response.data.status.data;
+        
+        if (token && user && user.id) {
+          localStorage.setItem('token', token);
+          localStorage.setItem('userId', user.id);  // Almacena el userId
+          setIsAuthenticated(true);
+          navigate('/');
+        } else {
+          console.error('No token or userId received from server');
+        }
+        
+      } else {
+        console.error('No valid response from server');
+      }
     } catch (error) {
       console.error('Login error:', error.response?.data);
     }

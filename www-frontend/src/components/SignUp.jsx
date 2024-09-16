@@ -78,7 +78,7 @@ function SignUp() {
                 fullWidth
                 id="handle"
                 label="Handle"
-                {...register("handle", { required: "Handle is required", pattern: { value: /^@\w+$/, message: "Handle must start with @ and contain only letters, numbers, and underscores" } })}
+                {...register("handle", { required: "Handle is required", pattern: { value: /^\w+$/, message: "Handle must start with @ and contain only letters, numbers, and underscores" } })}
                 error={!!errors.handle}
                 helperText={errors.handle?.message}
               />

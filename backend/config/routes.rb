@@ -19,7 +19,9 @@ Rails.application.routes.draw do
       resources :bars do
         resources :events, only: [:index]
       end
-      resources :beers
+      resources :beers do
+        resources :reviews, only: [:index, :create]  # Agregar la ruta para las evaluaciones
+      end
       
       resources :events
       resources :users do

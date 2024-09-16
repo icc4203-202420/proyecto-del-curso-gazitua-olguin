@@ -15,16 +15,21 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.get('/current_user')
-        .then(() => setIsAuthenticated(true))
-        .catch(() => {
-          localStorage.removeItem('token');
-          setIsAuthenticated(false);
-        });
-    }
-  }, []);
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    api.get('/users/current', {
+      headers: {
+        Authorization: `Bearer ${token}` // Asegurarse de que el token se pase en los encabezados
+      }
+    })
+      .then(() => setIsAuthenticated(true))
+      .catch(() => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+      });
+  }
+}, []);
 
   return (
     <Router>

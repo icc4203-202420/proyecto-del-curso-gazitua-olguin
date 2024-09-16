@@ -15,6 +15,7 @@ function Navbar({ setIsAuthenticated }) {
         navigate('/signin');
         return;
       }
+
       await api.delete('/logout', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -25,6 +26,7 @@ function Navbar({ setIsAuthenticated }) {
       navigate('/signin');
     } catch (error) {
       console.error('Logout error:', error);
+      // Incluso si hay un error, eliminamos el token y cerramos la sesión
       localStorage.removeItem('token');
       setIsAuthenticated(false);
       navigate('/signin');
