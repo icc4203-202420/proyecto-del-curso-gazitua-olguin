@@ -23,7 +23,12 @@ Rails.application.routes.draw do
         resources :reviews, only: [:index, :create] 
       end
       
-      resources :events
+      resources :events do
+        member do
+          post 'check_in' # Ruta para hacer check-in
+          get 'attendees' # Ruta para listar los asistentes
+        end
+      end
       resources :users do
         member do
           get 'friendships'
