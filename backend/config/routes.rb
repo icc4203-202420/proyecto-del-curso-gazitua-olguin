@@ -17,10 +17,10 @@ Rails.application.routes.draw do
     namespace :v1 do
       get 'users/current', to: 'users#current'
       resources :bars do
-        resources :events, only: [:index]
+        resources :events, only: [:index, :show]
       end
       resources :beers do
-        resources :reviews, only: [:index, :create]  # Agregar la ruta para las evaluaciones
+        resources :reviews, only: [:index, :create] 
       end
       
       resources :events
