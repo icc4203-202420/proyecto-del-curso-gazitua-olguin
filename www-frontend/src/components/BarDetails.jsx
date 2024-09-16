@@ -44,6 +44,15 @@ function BarDetails() {
           bar.beers.map(beer => (
             <ListItem key={beer.id}>
               <ListItemText primary={beer.name} secondary={beer.style} />
+              <Button 
+                  component={Link} 
+                  to={`/beers/${beer.id}`} 
+                  variant="contained" 
+                  color="primary"
+                  sx={{ mt: 2 }}
+                >
+                  Detalles
+                </Button>
             </ListItem>
           ))
         ) : (
@@ -72,7 +81,7 @@ function BarDetails() {
                     color="primary"
                     sx={{ mt: 2 }}
                     >
-                    Ver detalles
+                    Mas info
                 </Button>
 
               </CardContent>

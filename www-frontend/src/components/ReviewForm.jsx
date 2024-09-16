@@ -30,8 +30,6 @@ function ReviewForm({ beerId, userId, onReviewSubmitted }) {
         return;  // Si no hay token, no intentes hacer la solicitud
       }
 
-      console.log("Token being sent: ", token);
-      
       const response = await api.post(`/reviews`, {
         review: {
           rating,

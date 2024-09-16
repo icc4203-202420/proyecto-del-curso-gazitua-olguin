@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { TextField, Button, Container, Typography, Box, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { TextField, Button, Container, Typography, Box, Grid, Link } from '@mui/material';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import api from '../api';
 
 function SignUp() {
@@ -155,6 +155,9 @@ function SignUp() {
           >
             Sign Up
           </Button>
+          <Link component={RouterLink} to="/signin" variant="body2">
+            {"¿Ya tienes una cuenta? Sign In"}
+          </Link>
         </Box>
       </Box>
     </Container>

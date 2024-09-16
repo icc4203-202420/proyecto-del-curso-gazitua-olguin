@@ -78,7 +78,7 @@ function SignIn({ setIsAuthenticated }) {
             Sign In
           </Button>
           <Link component={RouterLink} to="/signup" variant="body2">
-            {"Don't have an account? Sign Up"}
+            {"¿No tienes una cuenta? Sign Up"}
           </Link>
         </Box>
       </Box>

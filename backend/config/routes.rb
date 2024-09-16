@@ -25,8 +25,8 @@ Rails.application.routes.draw do
       
       resources :events do
         member do
-          post 'check_in' # Ruta para hacer check-in
-          get 'attendees' # Ruta para listar los asistentes
+          post 'check_in' 
+          get 'attendees' 
         end
       end
       resources :users do
