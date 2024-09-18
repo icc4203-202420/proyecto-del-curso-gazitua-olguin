@@ -16,8 +16,8 @@ function EventInfo() {
         const response = await api.get(`/events/${eventId}`);
         setEvent(response.data.event);
 
-        const checkAttendance = await api.get(`/events/${eventId}/attendees`);
         const currentUserId = localStorage.getItem('userId');
+        const checkAttendance = await api.get(`/events/${eventId}/attendees`);
         const hasCheckedIn = checkAttendance.data.friends.concat(checkAttendance.data.others)
           .some(user => user.id === parseInt(currentUserId));
         setIsAttending(hasCheckedIn);
