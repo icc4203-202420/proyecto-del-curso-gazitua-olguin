@@ -7,18 +7,26 @@ class API::V1::BarsController < ApplicationController
   before_action :verify_jwt_token, only: [:create, :update, :destroy]
 
   def index
-    @bars = Bar.all
-    render json: { bars: @bars }, status: :ok
+    @bars = Bar.includes(:address).all
+    render json: { 
+      bars: @bars.as_json(include: { address: { only: [:line1, :line2, :city] } })
+    }, status: :ok
   end
 
   def show
     if @bar.image.attached?
-      render json: @bar.as_json.merge({ 
+      render json: @bar.as_json(include: { 
+        beers: { only: [:id, :name, :style] }, 
+        events: { only: [:id, :name, :date, :description] } 
+      }).merge({ 
         image_url: url_for(@bar.image), 
         thumbnail_url: url_for(@bar.thumbnail) }),
         status: :ok
     else
-      render json: { bar: @bar.as_json }, status: :ok
+      render json: @bar.as_json(include: { 
+        beers: { only: [:id, :name, :style] }, 
+        events: { only: [:id, :name, :date, :description] } 
+      }), status: :ok
     end
   end
 
