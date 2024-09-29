@@ -2,7 +2,7 @@ class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
   respond_to :json
-  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees]
+  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :add_picture]
   before_action :verify_jwt_token, only: [:create, :update, :destroy, :check_in]
 
   def index
@@ -77,6 +77,18 @@ class API::V1::EventsController < ApplicationController
     }, status: :ok
   end
 
+  # Añadir imagen a evento existente
+  def add_picture
+    @event_picture = @event.event_pictures.build(event_picture_params)
+    @event_picture.user = current_user
+
+    if @event_picture.save
+      render json: { message: 'Imagen subida exitosamente.', event_picture: @event_picture }, status: :created
+    else
+      render json: { errors: @event_picture.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_event
@@ -93,5 +105,9 @@ class API::V1::EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:name, :description, :date, :bar_id, :flyer)
+  end
+
+  def event_picture_params
+    params.require(:event_picture).permit(:image)
   end
 end

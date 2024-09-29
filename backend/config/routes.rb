@@ -25,6 +25,11 @@ Rails.application.routes.draw do
       
       resources :events do
         member do
+          post 'add_picture'
+        end
+      end
+      resources :events do
+        member do
           post 'check_in' 
           get 'attendees' 
         end

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Divider, Button, List, ListItem, ListItemText } from '@mui/material';
 import api from '../api';
+import UploadEventPicture from './UploadEventPicture';
 
 function EventInfo() {
   const { eventId } = useParams();
@@ -102,6 +103,10 @@ function EventInfo() {
           <Typography>No hay otros asistentes confirmados.</Typography>
         )}
       </List>
+
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h5" gutterBottom>Subir Fotografía del Evento</Typography>
+      <UploadEventPicture eventId={eventId} /> 
     </Container>
   );
 }
