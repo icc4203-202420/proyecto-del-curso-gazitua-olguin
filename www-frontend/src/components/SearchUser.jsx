@@ -7,6 +7,8 @@ function SearchUser() {
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [message, setMessage] = useState('');
 
   const searchUsers = async (query) => {
     if (query.trim() === '') {
@@ -38,6 +40,28 @@ function SearchUser() {
     setSearchTerm(event.target.value);
   };
 
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+  };
+
+  const handleTagUser = async () => {
+    if (!selectedUser) {
+      setMessage('Por favor selecciona un usuario para etiquetar.');
+      return;
+    }
+
+    try {
+      await axios.post(`/api/v1/event_pictures/${pictureId}/tag_user`, { user_id: selectedUser.id });
+      setMessage('Usuario etiquetado exitosamente.');
+      setSelectedUser(null);
+      setSearchTerm('');
+      setUsers([]);
+    } catch (error) {
+      console.error('Error al etiquetar usuario:', error);
+      setMessage('Error al etiquetar al usuario.');
+    }
+  };
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>Search Users</Typography>
@@ -60,6 +84,17 @@ function SearchUser() {
       {searchTerm && !loading && users.length === 0 && (
         <Typography>No users found</Typography>
       )}
+      {selectedUser && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleTagUser}
+          sx={{ mt: 2 }}
+        >
+          Etiquetar Usuario
+        </Button>
+      )}
+      {message && <Typography color="error" sx={{ mt: 2 }}>{message}</Typography>}
     </Container>
   );
 }

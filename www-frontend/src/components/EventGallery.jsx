@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ImageList, ImageListItem, Container, Typography } from '@mui/material';
 import api from '../api';
+import SearchUser from './SearchUser';
 
 function EventGallery({ eventId }) {
   const [images, setImages] = useState([]);
@@ -38,6 +39,7 @@ function EventGallery({ eventId }) {
               alt={`Evento Imagen ${image.id}`}
               loading="lazy"
             />
+            <SearchUser pictureId={image.id} />
           </ImageListItem>
         ))}
       </ImageList>
