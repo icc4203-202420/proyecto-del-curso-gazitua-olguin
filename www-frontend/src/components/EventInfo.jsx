@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Divider, Button, List, ListItem, ListItemText } from '@mui/material';
 import api from '../api';
 import UploadEventPicture from './UploadEventPicture';
+import EventGallery from './EventGallery';
 
 function EventInfo() {
   const { eventId } = useParams();
@@ -106,7 +107,11 @@ function EventInfo() {
 
       <Divider sx={{ my: 2 }} />
       <Typography variant="h5" gutterBottom>Subir Fotografía del Evento</Typography>
-      <UploadEventPicture eventId={eventId} /> 
+      <UploadEventPicture eventId={eventId} />
+
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h5" gutterBottom>Galería de Fotos</Typography>
+      <EventGallery eventId={eventId} /> 
     </Container>
   );
 }

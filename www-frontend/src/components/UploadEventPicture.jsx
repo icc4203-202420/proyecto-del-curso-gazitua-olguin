@@ -28,7 +28,12 @@ function UploadEventPicture({ eventId }) {
   return (
     <div>
         <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleImageChange} required />
+        <input
+            type="file"
+            onChange={handleImageChange}
+            name="event_picture[image]"
+            required
+        />
         <button 
             type="submit" 
             style={{

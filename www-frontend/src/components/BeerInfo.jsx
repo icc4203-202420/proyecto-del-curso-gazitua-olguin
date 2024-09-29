@@ -29,8 +29,4 @@ function BeerInfo({ beer }) {
   );
 }
 
-<<<<<<< HEAD
 export default BeerInfo;
-=======
-export default BeerInfo;
->>>>>>> ee416928889350119f83aa515b820f14d644b0f4
