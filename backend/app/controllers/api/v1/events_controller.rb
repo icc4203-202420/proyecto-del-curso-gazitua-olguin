@@ -2,7 +2,11 @@ class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
   respond_to :json
+<<<<<<< HEAD
   before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :add_picture]
+=======
+  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees]
+>>>>>>> ee416928889350119f83aa515b820f14d644b0f4
   before_action :verify_jwt_token, only: [:create, :update, :destroy, :check_in]
 
   def index

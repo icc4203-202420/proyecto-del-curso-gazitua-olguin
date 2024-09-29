@@ -4,7 +4,6 @@ class Review < ApplicationRecord
 
   validates :rating, presence: true, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 5 }
   validates :text, presence: true, length: { minimum: 15, tokenizer: ->(str) { str.scan(/\w+/) }, too_short: "must have at least 15 words" }
-
   after_save :update_beer_rating
   after_destroy :update_beer_rating
 
