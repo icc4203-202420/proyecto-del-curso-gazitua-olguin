@@ -13,10 +13,10 @@ function UploadEventPicture({ eventId }) {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('event_picture[image]', image);
+    formData.append('event_picture[image]', image); 
 
     try {
-      const response = await axios.post(`/api/v1/events/${eventId}/event_pictures`, formData, {
+      const response = await axios.post(`/api/v1/events/${eventId}/add_picture`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setMessage(response.data.message);
@@ -27,11 +27,24 @@ function UploadEventPicture({ eventId }) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleImageChange} required />
-        <button type="submit">Subir Imagen</button>
-      </form>
-      {message && <p>{message}</p>}
+        <form onSubmit={handleSubmit}>
+        <input
+            type="file"
+            onChange={handleImageChange}
+            name="event_picture[image]"
+            required
+        />
+        <button 
+            type="submit" 
+            style={{
+            backgroundColor: 'blue', 
+            color: 'white'
+        }}
+        >
+        Subir Imagen
+        </button>
+        </form>
+        {message && <p>{message}</p>}
     </div>
   );
 }
