@@ -9,8 +9,8 @@ export const useSession = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
 
-  const login = async (email, token) => {
-    const userData = { email, token };
+  const login = async (user, token) => {
+    const userData = { user_id: user.id, email: user.email, token };
     await SecureStore.setItemAsync('session', JSON.stringify(userData));
     setSession(userData);
   };
@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadSession = async () => {
       const storedSession = await SecureStore.getItemAsync('session');
+      console.log('Sesión cargada desde SecureStore:', storedSession); // Verificar si la sesión se carga correctamente
       if (storedSession) {
         setSession(JSON.parse(storedSession));
       }
@@ -36,4 +37,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-

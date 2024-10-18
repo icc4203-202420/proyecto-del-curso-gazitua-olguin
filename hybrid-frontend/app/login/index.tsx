@@ -28,8 +28,10 @@ const LoginPage = () => {
 
       if (data?.status?.code === 200) {
         const { token, user } = data.status.data;
+
         if (token && user) {
-          await login(user.email, token);
+          await login(user, token); // Actualizamos la sesión
+          console.log('Sesión almacenada:', { token, user });
           router.replace('/');
         } else {
           Alert.alert('Error', 'No se pudo iniciar sesión.');

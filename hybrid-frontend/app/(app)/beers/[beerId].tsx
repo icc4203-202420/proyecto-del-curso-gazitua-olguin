@@ -1,8 +1,15 @@
 // app/(app)/beers/[beerId].tsx
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { useRoute, RouteProp, useNavigation} from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
+
+// Tipos del Stack Navigator
+type BeersStackParamList = {
+    BeerDetails: { beerId: string };
+    ReviewModal: { beerId: string };
+  };
 
 // Definimos los tipos de los parámetros de la ruta
 type BeerDetailsRouteParams = {
@@ -44,6 +51,7 @@ type Beer = {
 
 export default function BeerDetails() {
   const route = useRoute<RouteProp<BeerDetailsRouteParams, 'BeerDetails'>>();
+  const navigation = useNavigation();
   const { beerId } = route.params;
   const [beer, setBeer] = useState<Beer | null>(null);
   const [loading, setLoading] = useState(true);
@@ -115,6 +123,12 @@ export default function BeerDetails() {
       ) : (
         <Text style={styles.text}>No hay reseñas para esta cerveza.</Text>
       )}
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('ReviewModal', { beerId })}
+      >
+        <Ionicons name="add-circle" size={60} color="#FF9800" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -187,5 +201,10 @@ const styles = StyleSheet.create({
   reviewText: {
     fontSize: 14,
     color: '#FFFFFF',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
   },
 });
