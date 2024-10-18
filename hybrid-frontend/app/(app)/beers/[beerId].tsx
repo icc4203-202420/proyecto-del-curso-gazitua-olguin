@@ -27,15 +27,22 @@ type Bar = {
 };
 
 type Beer = {
-  name: string;
-  style?: string;
-  alcohol?: string;
-  brewery?: {
     name: string;
+    style?: string;
+    alcohol?: string;
+    hop?: string;
+    yeast?: string;
+    maltes?: string;
+    ibu?: string;
+    brewery?: {
+      name: string;
+    };
+    bars?: Array<{
+      id: string;
+      name: string;
+    }>;
   };
-  bars?: Bar[];
-  reviews?: Review[];
-};
+  
 
 export default function BeerDetails() {
   const route = useRoute<RouteProp<BeerDetailsRouteParams, 'BeerDetails'>>();
@@ -71,6 +78,10 @@ export default function BeerDetails() {
       <Text style={styles.title}>{beer.name}</Text>
       <Text style={styles.text}>Estilo: {beer.style || 'No disponible'}</Text>
       <Text style={styles.text}>Alcohol: {beer.alcohol || 'No disponible'}</Text>
+      <Text style={styles.text}>Hop: {beer.hop || 'No disponible'}</Text>
+      <Text style={styles.text}>Yeast: {beer.yeast || 'No disponible'}</Text>
+      <Text style={styles.text}>Maltes: {beer.maltes || 'No disponible'}</Text>
+      <Text style={styles.text}>IBU: {beer.alcohol || 'No disponible'}</Text>
 
       <Text style={styles.sectionTitle}>Cervecería:</Text>
       <Text style={styles.text}>{beer.brewery?.name || 'No disponible'}</Text>
