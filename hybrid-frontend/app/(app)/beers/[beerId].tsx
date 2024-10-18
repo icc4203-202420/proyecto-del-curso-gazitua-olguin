@@ -27,22 +27,20 @@ type Bar = {
 };
 
 type Beer = {
+  name: string;
+  style?: string;
+  alcohol?: string;
+  hop?: string;
+  yeast?: string;
+  maltes?: string;
+  ibu?: string;
+  brewery?: {
     name: string;
-    style?: string;
-    alcohol?: string;
-    hop?: string;
-    yeast?: string;
-    maltes?: string;
-    ibu?: string;
-    brewery?: {
-      name: string;
-    };
-    bars?: Array<{
-      id: string;
-      name: string;
-    }>;
   };
-  
+
+  bars?: Bar[];
+  reviews?: Review[];
+};
 
 export default function BeerDetails() {
   const route = useRoute<RouteProp<BeerDetailsRouteParams, 'BeerDetails'>>();
