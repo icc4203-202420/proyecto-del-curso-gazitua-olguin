@@ -1,17 +1,13 @@
+// app/(app)/index.js
 import { View, Text, StyleSheet } from 'react-native';
-import { useSession } from '../../hooks/useSession';
-import { Button } from '@rneui/themed';
 
-const HomePage = () => {
-  const { session, logout } = useSession();
-
+export default function HomePage() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido, {session.email}</Text>
-      <Button title="Salir" onPress={logout} />
+      <Text style={styles.text}>Bienvenido a la Página Principal</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -20,10 +16,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-  title: {
+  text: {
+    color: '#FF9800',
     fontSize: 24,
-    color: '#fff',
   },
 });
-
-export default HomePage;
