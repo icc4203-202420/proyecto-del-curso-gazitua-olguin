@@ -7,7 +7,6 @@ export const login = async (email, password) => {
     const response = await api.post('/login', {
       user: { email, password },
     });
-    console.log('Respuesta del login:', response.data); // Verifica la respuesta del servidor
     return response.data;
   } catch (error) {
     console.error('Error en authService login:', error?.response?.data || error.message);
@@ -19,7 +18,6 @@ export const login = async (email, password) => {
 export const signUp = async (userData) => {
   try {
     const response = await api.post('/signup', { user: userData });
-    console.log('Respuesta del signup:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error en authService signup:', error?.response?.data || error.message);

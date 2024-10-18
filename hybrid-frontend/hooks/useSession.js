@@ -16,20 +16,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync('session');
-    setSession(null);
+    try {
+      await SecureStore.deleteItemAsync('session');  // Eliminar sesión almacenada
+      await SecureStore.deleteItemAsync('token');
+      setSession(null);  // Actualizar el estado de sesión a null
+      console.log('Sesión cerrada correctamente');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   useEffect(() => {
     const loadSession = async () => {
       const storedSession = await SecureStore.getItemAsync('session');
-      console.log('Sesión cargada desde SecureStore:', storedSession); // Verificar si la sesión se carga correctamente
       if (storedSession) {
         setSession(JSON.parse(storedSession));
+      } else {
+        setSession(null); // Asegúrate de que el estado sea null si no hay sesión
       }
     };
     loadSession();
   }, []);
+  
 
   return (
     <AuthContext.Provider value={{ session, login, logout }}>

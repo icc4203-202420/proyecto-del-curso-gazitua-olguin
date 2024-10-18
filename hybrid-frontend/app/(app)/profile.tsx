@@ -2,9 +2,15 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@rneui/themed';
 import { useSession } from '../../hooks/useSession';
+import { clearApiToken } from '../services/api';  // Importar función para limpiar token
 
 export default function UserPage() {
   const { session, logout } = useSession();
+
+  const handleLogout = async () => {
+    await logout();
+    clearApiToken();  // Limpiar el interceptor de Axios
+  };
 
   return (
     <View style={styles.container}>
@@ -12,7 +18,7 @@ export default function UserPage() {
       <Text style={styles.email}>Correo: {session?.email}</Text>
       <Button 
         title="Cerrar Sesión" 
-        onPress={logout} 
+        onPress={handleLogout} 
         buttonStyle={styles.logoutButton}
       />
     </View>
