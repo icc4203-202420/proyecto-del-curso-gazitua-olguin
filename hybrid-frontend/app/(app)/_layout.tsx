@@ -1,6 +1,8 @@
 // app/(app)/_layout.js
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { Redirect } from 'expo-router';
+import { useSession } from '../../hooks/useSession';
 import HomePage from './index';
 import UserPage from './profile';  // Nueva página de User (Perfil)
 import BeersList from './beers/_layout';   // Nueva página de Beers (Cervezas)
@@ -8,6 +10,13 @@ import BeersList from './beers/_layout';   // Nueva página de Beers (Cervezas)
 const Tab = createBottomTabNavigator();
 
 export default function AppLayout() {
+  const { session, logout } = useSession();
+
+  // Si no hay sesión, redirige al login
+  if (!session) {
+    return <Redirect href="/login" />;
+  }
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
