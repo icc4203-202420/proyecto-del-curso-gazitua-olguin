@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync('session');  // Eliminar sesión almacenada
       await SecureStore.deleteItemAsync('token');
       setSession(null);  // Actualizar el estado de sesión a null
-      console.log('Sesión cerrada correctamente');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }

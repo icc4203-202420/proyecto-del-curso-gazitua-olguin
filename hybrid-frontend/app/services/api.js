@@ -13,7 +13,6 @@ let interceptorId;
 const getToken = async () => {
   try {
     const token = await SecureStore.getItemAsync('token');
-    console.log('Token obtenido:', token); // Log para depuración
     return token;
   } catch (error) {
     console.error('Error al obtener el token:', error);
@@ -44,7 +43,6 @@ setTokenInterceptor();
 export const clearApiToken = () => {
   if (interceptorId !== undefined) {
     api.interceptors.request.eject(interceptorId);  // Remover el interceptor
-    console.log('Interceptor eliminado');
   }
 };
 
