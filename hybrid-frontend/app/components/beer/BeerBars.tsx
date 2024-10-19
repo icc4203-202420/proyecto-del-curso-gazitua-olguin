@@ -7,7 +7,8 @@ export default function BeerBarsTab({ bars }) {
   }
 
   return (
-    <FlatList
+    <View style={styles.container}>
+      <FlatList
       data={bars}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -16,11 +17,13 @@ export default function BeerBarsTab({ bars }) {
         </View>
       )}
     />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  barItem: { padding: 10, backgroundColor: '#1C1C1C', marginVertical: 5, borderRadius: 8 },
+  container: { flex: 1, backgroundColor: '#000'},
+  barItem: { padding: 10, backgroundColor: '#1C1C1C', marginVertical: 16, borderRadius: 10 },
   barName: { fontSize: 18, color: '#FF9800' },
   text: { fontSize: 18, color: '#FFFFFF', textAlign: 'center', marginTop: 20 },
 });

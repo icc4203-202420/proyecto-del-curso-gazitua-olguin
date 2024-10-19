@@ -15,7 +15,7 @@ export default function UserPage() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Perfil del Usuario</Text>
-      <Text style={styles.email}>Correo: {session?.email}</Text>
+      <Text style={styles.email}>{session?.email}</Text>
       <Button 
         title="Cerrar Sesión" 
         onPress={handleLogout} 
@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     color: '#FF9800',
     fontSize: 24,
     marginBottom: 10,
+    fontWeight: 'bold',
   },
   email: {
     color: '#FFFFFF',

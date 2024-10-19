@@ -15,6 +15,6 @@ export default function BeerInfoTab({ beer }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: '#000' },
-  text: { fontSize: 18, color: '#FFFFFF', marginBottom: 10 },
+  container: { padding: 16, backgroundColor: '#000', flex: 1 },
+  text: { fontSize: 24, color: '#FFFFFF', marginBottom: 24, marginHorizontal: 16, marginTop: 16 },
 });

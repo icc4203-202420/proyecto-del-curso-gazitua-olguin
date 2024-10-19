@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function HomePage() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Bienvenido a la Página Principal</Text>
+      <Text style={styles.text}>Bienvenid@ a Beer App</Text>
     </View>
   );
 }
@@ -19,5 +19,6 @@ const styles = StyleSheet.create({
   text: {
     color: '#FF9800',
     fontSize: 24,
+    fontWeight: 'bold',
   },
 });
