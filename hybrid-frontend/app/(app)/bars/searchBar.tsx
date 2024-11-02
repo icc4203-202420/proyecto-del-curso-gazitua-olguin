@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import api from '../../services/api'; // Usamos la API configurada para las llamadas
+import { View, FlatList, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { SearchBar } from '@rneui/themed';
+import api from '../../services/api';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -9,7 +10,7 @@ type BarsStackParamList = {
   BarDetails: { barId: string };
 };
 
-export default function SearchBar() {
+export default function SearchBarComponent() {
   const [bars, setBars] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -39,11 +40,14 @@ export default function SearchBar() {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
+      <SearchBar
         placeholder="Buscar bares..."
         value={search}
         onChangeText={setSearch}
+        platform="default"
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+        lightTheme
       />
       <FlatList
         data={filteredBars}
@@ -63,7 +67,8 @@ export default function SearchBar() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#000' },
-  searchInput: { backgroundColor: '#fff', padding: 8, borderRadius: 8, marginBottom: 16 },
+  searchBarContainer: { backgroundColor: '#000', borderBottomColor: 'transparent', borderTopColor: 'transparent' },
+  searchBarInput: { backgroundColor: '#1C1C1C' },
   barItem: { padding: 12, backgroundColor: '#1C1C1C', marginBottom: 10, borderRadius: 8 },
   barName: { fontSize: 18, color: '#FF9800', fontWeight: 'bold' },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },

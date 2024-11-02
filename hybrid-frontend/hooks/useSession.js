@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (user, token) => {
     const userData = { user_id: user.id, email: user.email, token };
     await SecureStore.setItemAsync('session', JSON.stringify(userData));
+    await SecureStore.setItemAsync('token', token); // Guardamos el token por separado
     setSession(userData);
   };
 

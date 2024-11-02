@@ -7,6 +7,7 @@ import HomePage from './index';
 import UserPage from './profile';
 import BeersLayout from './beers/_layout';  // Incluye BeersLayout
 import BarsLayout from './bars/_layout';
+import UsersLayout from './users/_layout'; // Importamos UsersLayout
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -38,16 +39,19 @@ function MainTabs() {
 
           switch (route.name) {
             case 'Home':
-              iconName = focused ? 'home' : 'home-outline';
+                iconName = focused ? 'home' : 'home-outline';
               break;
-            case 'User':
-              iconName = focused ? 'person' : 'person-outline';
+              case 'Me':
+                iconName = focused ? 'person' : 'person-outline';
               break;
-            case 'Beers':
-              iconName = focused ? 'beer' : 'beer-outline';
+              case 'Users':
+                iconName = focused ? 'search' : 'search-outline';
               break;
-            case 'Bars':
-              iconName = focused ? 'location' : 'location-outline';
+              case 'Beers':
+                iconName = focused ? 'beer' : 'beer-outline';
+              break;
+              case 'Bars':
+                iconName = focused ? 'location' : 'location-outline';
               break;
             default:
               iconName = 'help-circle-outline';
@@ -63,7 +67,8 @@ function MainTabs() {
       <Tab.Screen name="Home" component={HomePage} />
       <Tab.Screen name="Beers" component={BeersLayout} />
       <Tab.Screen name="Bars" component={BarsLayout} />
-      <Tab.Screen name="User" component={UserPage} />
+      <Tab.Screen name="Users" component={UsersLayout} />
+      <Tab.Screen name="Me" component={UserPage} />
     </Tab.Navigator>
   );
 }

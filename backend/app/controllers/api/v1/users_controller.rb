@@ -43,24 +43,42 @@ class API::V1::UsersController < ApplicationController
   end
   
   def friendships
-    if @user.nil?
-      render json: { error: 'User not found' }, status: :not_found
-      return
+    # Método para listar amistades o crear una nueva amistad
+    if request.get?
+      @friends = @user.friends
+      render json: @friends, status: :ok
+    elsif request.post?
+      create_friendship
     end
-    @friends = @user.friends
-    render json: @friends, status: :ok
   end
 
   def create_friendship
+    # Verificar si el usuario autenticado es el que intenta agregar un amigo
+    if current_user.id != @user.id
+      render json: { error: 'Usuario no autorizado' }, status: :unauthorized
+      return
+    end
+  
+    # Log para verificar el usuario autenticado
+    puts "Usuario autenticado: #{current_user.id}"
+    puts "ID del amigo recibido: #{params[:friend_id]}"
+    puts "ID del bar recibido: #{params[:bar_id]}"
+  
     @friend = User.find(params[:friend_id])
-    @friendship = @user.friendships.build(friend: @friend)
+    @bar = Bar.find_by(id: params[:bar_id])
+  
+    # Crear la amistad usando current_user directamente
+    @friendship = current_user.friendships.build(friend: @friend, bar: @bar)
+    
     if @friendship.save
+      puts "Amistad creada con éxito entre el usuario #{current_user.id} y el amigo #{@friend.id} en el bar #{@bar.id}"
       render json: @friendship, status: :created
     else
+      puts "Error al crear amistad: #{@friendship.errors.full_messages}"
       render json: @friendship.errors, status: :unprocessable_entity
     end
   end
-
+  
   private
 
   def set_user
@@ -77,6 +95,6 @@ class API::V1::UsersController < ApplicationController
   end
 
   def friendship_params
-    params.require(:friendship). permit(:friend_id)
+    params.require(:friendship).permit(:friend_id, :bar_id)
   end
 end

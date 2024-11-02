@@ -26,6 +26,7 @@ export const setTokenInterceptor = () => {
     async (config) => {
       const token = await getToken();
       if (token) {
+        console.log('Token encontrado:', token);
         config.headers['Authorization'] = `Bearer ${token}`;
       }
       return config;
