@@ -61,7 +61,6 @@ export default function ReviewModal() {
       navigation.goBack();
     } catch (error) {
       const errorMessage = error?.response?.data?.message || 'No se pudo enviar la reseña.';
-      console.error('Error al enviar la reseña:', errorMessage);
       Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);

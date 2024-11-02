@@ -9,7 +9,6 @@ export const login = async (email, password) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error en authService login:', error?.response?.data || error.message);
     throw error; // Propagamos el error para que lo maneje el componente
   }
 };
@@ -20,7 +19,6 @@ export const signUp = async (userData) => {
     const response = await api.post('/signup', { user: userData });
     return response.data;
   } catch (error) {
-    console.error('Error en authService signup:', error?.response?.data || error.message);
     throw error;
   }
 };
