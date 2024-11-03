@@ -1,6 +1,16 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+// app/components/bar/BarEventsTab.tsx
+
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type EventsStackParamList = {
+  EventsLayout: { screen: string; params: { eventId: string } };
+};
 
 export default function BarEventsTab({ events }) {
+  const navigation = useNavigation<NativeStackNavigationProp<EventsStackParamList>>();
+
   if (!events || events.length === 0) {
     return <Text style={styles.text}>No hay eventos próximos en este bar.</Text>;
   }
@@ -11,13 +21,22 @@ export default function BarEventsTab({ events }) {
         data={events}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.eventItem}>
-            <Text style={styles.eventName}>{item.name}</Text>
-            <Text style={styles.eventDate}>
-              {new Date(item.date).toLocaleDateString()} - {new Date(item.date).toLocaleTimeString()}
-            </Text>
-            <Text style={styles.eventDescription}>{item.description}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EventsLayout', {
+                screen: 'EventDetails',
+                params: { eventId: item.id },
+              })
+            }
+          >
+            <View style={styles.eventItem}>
+              <Text style={styles.eventName}>{item.name}</Text>
+              <Text style={styles.eventDate}>
+                {new Date(item.date).toLocaleDateString()} - {new Date(item.date).toLocaleTimeString()}
+              </Text>
+              <Text style={styles.eventDescription}>{item.description}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>
