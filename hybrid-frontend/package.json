@@ -39,7 +39,9 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.2.0",
     "typescript": "~5.3.3",
-    "expo-image-picker": "~15.0.7"
+    "expo-image-picker": "~15.0.7",
+    "expo-notifications": "~0.28.19",
+    "expo-device": "~6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

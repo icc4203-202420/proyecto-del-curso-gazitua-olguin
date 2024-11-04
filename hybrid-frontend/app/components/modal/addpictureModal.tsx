@@ -2,14 +2,13 @@
 
 import React, { useState } from 'react';
 import { View, Button, TextInput, Image, StyleSheet, Alert } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../../services/api';
 
-type SharePhotoProps = {
-  eventId: string;
-};
-
-const SharePhoto = ({ eventId }: SharePhotoProps) => {
+const SharePhoto = () => {
+  const route = useRoute();
+  const { eventId } = route.params || {};
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [tags, setTags] = useState('');
   const [description, setDescription] = useState(''); 
