@@ -13,16 +13,18 @@ const ResultsList = React.memo(({ results }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [bars, setBars] = useState([]);
   const [selectedBarId, setSelectedBarId] = useState(null);
-  const [friends, setFriends] = useState([]); // Lista de IDs de amigos
+  const [events, setEvents] = useState([]); 
+  const [selectedEventId, setSelectedEventId] = useState(null); 
+  const [friends, setFriends] = useState([]); 
   const { session } = useSession();
 
-  const userId = session?.user_id; // Obtener el ID del usuario autenticado
+  const userId = session?.user_id; 
 
   // Cargar lista de amigos cuando se monta el componente
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const response = await api.get(`/users/${userId}/friendships`); // Endpoint que devuelve la lista de amigos del usuario actual
+        const response = await api.get(`/users/${userId}/friendships`); 
         setFriends(response.data.map((friend) => friend.id));
       } catch (error) {
         console.error('Error al cargar amigos:', error);
@@ -45,6 +47,20 @@ const ResultsList = React.memo(({ results }) => {
 
     fetchBars();
   }, []);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await api.get('/events');
+        setEvents(response.data.events); 
+      } catch (error) {
+        console.error('Error al cargar eventos:', error);
+      }
+    };
+  
+    fetchEvents();
+  }, []);
+  
 
   // Función para abrir el modal y configurar el usuario seleccionado
   const openModal = (userId) => {
@@ -70,11 +86,13 @@ const ResultsList = React.memo(({ results }) => {
     console.log('ID del usuario autenticado:', userId); // Mostrar el ID del usuario autenticado
     console.log('ID del amigo seleccionado:', selectedUserId);
     console.log('ID de bar seleccionado:', selectedBarId);
+    console.log('ID de evento seleccionado:', selectedEventId);
 
     try {
         const response = await api.post(`/users/${userId}/friendships`, {
           friend_id: selectedUserId,
           bar_id: selectedBarId,
+          event_id: selectedEventId || null,
         });
         
         if (response.status === 201) {
@@ -114,7 +132,6 @@ const ResultsList = React.memo(({ results }) => {
         }}
       />
 
-      {/* Modal para seleccionar el bar */}
       <Modal visible={isModalVisible} transparent={true} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -133,6 +150,24 @@ const ResultsList = React.memo(({ results }) => {
                 </TouchableOpacity>
               ))}
             </View>
+
+            {/* Nueva sección para seleccionar un evento opcional */}
+            <Text style={styles.modalTitle}>Selecciona el evento (opcional)</Text>
+            <View style={styles.optionsContainer}>
+              {events.map((event) => (
+                <TouchableOpacity
+                  key={event.id}
+                  onPress={() => setSelectedEventId(event.id)}
+                  style={[
+                    styles.optionItem,
+                    selectedEventId === event.id && styles.selectedOption,
+                  ]}
+                >
+                  <Text style={styles.optionText}>{event.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
             <View style={styles.modalButtons}>
               <Button title="Cancelar" onPress={closeModal} />
               <Button title="Agregar Amigo" onPress={addFriend} />

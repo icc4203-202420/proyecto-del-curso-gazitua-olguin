@@ -59,16 +59,12 @@ class API::V1::UsersController < ApplicationController
       return
     end
   
-    # Log para verificar el usuario autenticado
-    puts "Usuario autenticado: #{current_user.id}"
-    puts "ID del amigo recibido: #{params[:friend_id]}"
-    puts "ID del bar recibido: #{params[:bar_id]}"
-  
     @friend = User.find(params[:friend_id])
     @bar = Bar.find_by(id: params[:bar_id])
+    @event = Event.find_by(id: params[:event_id]) if params[:event_id].present? # Buscamos el evento si se envía el ID
   
     # Crear la amistad usando current_user directamente
-    @friendship = current_user.friendships.build(friend: @friend, bar: @bar)
+    @friendship = current_user.friendships.build(friend: @friend, bar: @bar, event: @event)
     
     if @friendship.save
       puts "Amistad creada con éxito entre el usuario #{current_user.id} y el amigo #{@friend.id} en el bar #{@bar.id}"
@@ -95,6 +91,6 @@ class API::V1::UsersController < ApplicationController
   end
 
   def friendship_params
-    params.require(:friendship).permit(:friend_id, :bar_id)
+    params.require(:friendship).permit(:friend_id, :bar_id, :event_id)
   end
 end
