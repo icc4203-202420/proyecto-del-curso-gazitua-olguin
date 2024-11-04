@@ -43,6 +43,7 @@ Rails.application.routes.draw do
           post 'friendships'
         end
         collection do
+          post 'push_token', to: 'users#update_push_token'
           get 'search'
         end
         resources :reviews, only: [:index]

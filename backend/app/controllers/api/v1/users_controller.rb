@@ -74,6 +74,14 @@ class API::V1::UsersController < ApplicationController
       render json: @friendship.errors, status: :unprocessable_entity
     end
   end
+
+  def update_push_token
+    if current_user.update(push_token: params[:push_token])
+      render json: { message: 'Push token updated successfully' }, status: :ok
+    else
+      render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
   
   private
 

@@ -26,6 +26,12 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d5f34a5b-ad68-4081-b0c4-2c56d2d06529"
+      }
+    },
+    "owner": "moontse"
   }
 }
