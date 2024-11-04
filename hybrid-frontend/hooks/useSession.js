@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { registerForPushNotificationsAsync } from '../util/Notifications';
+import { setTokenInterceptor, clearApiToken } from '../app/services/api';
 
 const AuthContext = createContext();
 
@@ -8,12 +9,16 @@ export const useSession = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
+  const [loadingSession, setLoadingSession] = useState(true);
 
   const login = async (user, token) => {
     const userData = { user_id: user.id, email: user.email, token };
     await SecureStore.setItemAsync('session', JSON.stringify(userData));
     await SecureStore.setItemAsync('token', token); 
     setSession(userData);
+
+    // Actualiza el interceptor con el nuevo token
+    setTokenInterceptor();
 
     // Obtener y guardar el token de notificación
     const pushToken = await registerForPushNotificationsAsync();
@@ -35,6 +40,9 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync('session');
       await SecureStore.deleteItemAsync('token');
       setSession(null);
+
+      // Limpia el interceptor de token
+      clearApiToken();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }
@@ -48,9 +56,12 @@ export const AuthProvider = ({ children }) => {
       } else {
         setSession(null);
       }
+      setLoadingSession(false);
     };
     loadSession();
   }, []);
+
+  if (loadingSession) return null; // O muestra un spinner
 
   return (
     <AuthContext.Provider value={{ session, login, logout }}>
