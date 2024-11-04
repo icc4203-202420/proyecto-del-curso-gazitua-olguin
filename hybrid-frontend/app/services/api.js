@@ -1,3 +1,5 @@
+//app/services/api.js
+
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
@@ -26,7 +28,6 @@ export const setTokenInterceptor = () => {
     async (config) => {
       const token = await getToken();
       if (token) {
-        console.log('Token encontrado:', token);
         config.headers['Authorization'] = `Bearer ${token}`;
       }
       return config;

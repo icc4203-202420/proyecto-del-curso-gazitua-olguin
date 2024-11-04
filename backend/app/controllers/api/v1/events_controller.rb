@@ -2,7 +2,7 @@ class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
   respond_to :json
-  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :add_picture]
+  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :pictures]
   before_action :verify_jwt_token, only: [:create, :update, :destroy, :check_in]
 
   def index
@@ -77,15 +77,23 @@ class API::V1::EventsController < ApplicationController
     }, status: :ok
   end
 
-  # Añadir imagen a evento existente
-  def add_picture
-    @event_picture = @event.event_pictures.build(event_picture_params)
-    @event_picture.user = current_user
+  # Obtener todas las fotos asociadas con un evento
+  def pictures
+    if @event.event_pictures.any?
+      pictures_data = @event.event_pictures.map do |event_picture|
+        if event_picture.image.attached?
+          {
+            id: event_picture.id,
+            image_url: url_for(event_picture.image),
+            description: event_picture.description,
+            tagged_users: event_picture.tagged_users.map(&:handle) 
+          }
+        end
+      end.compact
 
-    if @event_picture.save
-      render json: { message: 'Imagen subida exitosamente.', event_picture: @event_picture }, status: :created
+      render json: pictures_data
     else
-      render json: { errors: @event_picture.errors.full_messages }, status: :unprocessable_entity
+      render json: { message: "No pictures found for this event." }, status: :not_found
     end
   end
 
@@ -108,6 +116,6 @@ class API::V1::EventsController < ApplicationController
   end
 
   def event_picture_params
-    params.require(:event_picture).permit(:image)
+    params.require(:event_picture).permit(:image, :description)
   end
 end

@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 import EventInfoTab from '../../components/event/EventInfo';
 import EventAttendeesTab from '../../components/event/EventAttendees';
+import EventPictures from '../../components/event/EventPictures';
 import { useSession } from '../../../hooks/useSession';
 
 const Tab = createMaterialTopTabNavigator();
@@ -25,6 +27,7 @@ type Event = {
 export default function EventDetails() {
   const route = useRoute<RouteProp<EventDetailsRouteParams, 'EventDetails'>>();
   const { eventId } = route.params;
+  const navigation = useNavigation();
   const [event, setEvent] = useState<Event | null>(null);
   const [attendees, setAttendees] = useState<{ friends: any[]; others: any[] }>({ friends: [], others: [] });
   const [isAttending, setIsAttending] = useState(false);
@@ -97,13 +100,22 @@ export default function EventDetails() {
       >
         <Tab.Screen name="Info" children={() => <EventInfoTab event={event} />} />
         <Tab.Screen name="Asistentes" children={() => <EventAttendeesTab attendees={attendees} />} />
-      </Tab.Navigator>
+        <Tab.Screen name="Fotos" children={() => <EventPictures eventId={eventId} />} />
+        </Tab.Navigator>
+
+        {/* Botón flotante para abrir el modal */}
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => navigation.navigate('addpictureModal', { eventId })}
+        >
+          <Ionicons name="add-circle" size={60} color="#FF9800" />
+        </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' }, // Fondo oscuro más suave
+  container: { flex: 1, backgroundColor: '#000' }, 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -135,5 +147,6 @@ const styles = StyleSheet.create({
   attendButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '500' },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   errorText: { color: '#FFFFFF', textAlign: 'center', marginTop: 20 },
+  floatingButton: { position: 'absolute', bottom: 20, right: 20 },
 });
 

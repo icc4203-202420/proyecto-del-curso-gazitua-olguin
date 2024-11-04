@@ -25,13 +25,16 @@ Rails.application.routes.draw do
       
       resources :events do
         member do
-          post 'add_picture'
+          get :attendees
+          post 'check_in'
+          get :pictures
         end
-      end
-      resources :events do
-        member do
-          post 'check_in' 
-          get 'attendees' 
+  
+        resources :event_pictures, only: [:create] do
+          member do
+            post :tag_user
+            get :tagged_users
+          end
         end
       end
       resources :users do
