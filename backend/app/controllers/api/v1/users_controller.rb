@@ -61,14 +61,24 @@ class API::V1::UsersController < ApplicationController
   
     @friend = User.find(params[:friend_id])
     @bar = Bar.find_by(id: params[:bar_id])
-    @event = Event.find_by(id: params[:event_id]) if params[:event_id].present? # Buscamos el evento si se envía el ID
+    @event = Event.find_by(id: params[:event_id]) if params[:event_id].present?
   
     # Crear la amistad usando current_user directamente
     @friendship = current_user.friendships.build(friend: @friend, bar: @bar, event: @event)
-    
+  
     if @friendship.save
       puts "Amistad creada con éxito entre el usuario #{current_user.id} y el amigo #{@friend.id} en el bar #{@bar.id}"
       render json: @friendship, status: :created
+  
+      # Enviar notificación push al usuario seguido
+      if @friend.push_token.present?
+        PushNotificationService.send_notification(
+          to: @friend.push_token,
+          title: 'Nuevo seguidor en BeerApp!',
+          body: "#{current_user.handle} te ha seguido.",
+          data: { screen: 'Inicio' }
+        )
+      end
     else
       puts "Error al crear amistad: #{@friendship.errors.full_messages}"
       render json: @friendship.errors, status: :unprocessable_entity
