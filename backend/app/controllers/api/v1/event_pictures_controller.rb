@@ -11,7 +11,10 @@ class API::V1::EventPicturesController < ApplicationController
           if params[:tag_handles]
             params[:tag_handles].each do |_, handle|
               user = User.find_by(handle: handle.strip)
-              Tagging.create(user: user, event_picture: @event_picture) if user
+              if user
+                Tagging.create(user: user, event_picture: @event_picture)
+                send_notification_to_tagged_user(user, @event_picture)
+              end
             end
           end
     
@@ -46,6 +49,17 @@ class API::V1::EventPicturesController < ApplicationController
     end
   
     private
+    def send_notification_to_tagged_user(user, event_picture)
+      return unless user.push_token.present?
+  
+      PushNotificationService.send_notification(
+        to: user.push_token,
+        title: '¡Has sido etiquetado en una foto!',
+        body: "#{current_user.handle} te ha etiquetado en una foto del evento.",
+        data: { screen: 'Inicio' } # Puedes cambiar 'Inicio' a la pantalla específica si quieres que la notificación abra en otra vista
+      )
+    end
+    
   
     def event_picture_params
         # Permitir `tag_handles` como un array en los parámetros
