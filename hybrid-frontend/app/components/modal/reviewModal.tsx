@@ -91,7 +91,6 @@ export default function ReviewModal() {
         onChangeText={setText}
       />
 
-      <Text style={styles.label}>Calificación:</Text>
       <AirbnbRating
         count={5} // 5 estrellas
         reviews={["Mala", "Regular", "Buena", "Muy buena", "Excelente"]} // Opcional
@@ -134,11 +133,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  label: {
-    fontSize: 18,
-    marginBottom: 5,
-    color: '#555',
-  },
+
   button: {
     backgroundColor: '#FF9800',
     padding: 15,

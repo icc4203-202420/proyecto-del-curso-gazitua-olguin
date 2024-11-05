@@ -7,7 +7,8 @@ export default function BeerReviewsTab({ reviews }) {
   }
 
   return (
-    <FlatList
+    <View style={styles.container}> 
+      <FlatList
       data={reviews}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
@@ -18,11 +19,13 @@ export default function BeerReviewsTab({ reviews }) {
         </View>
       )}
     />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  reviewItem: { padding: 10, backgroundColor: '#1C1C1C', marginVertical: 5, borderRadius: 8 },
+  container: { flex: 1, backgroundColor: '#000'},
+  reviewItem: { padding: 10, backgroundColor: '#1C1C1C', marginVertical: 16, borderRadius: 5 },
   reviewUser: { fontSize: 18, color: '#FF9800', fontWeight: 'bold' },
   reviewRating: { fontSize: 16, color: '#FFFFFF' },
   reviewText: { fontSize: 14, color: '#FFFFFF' },

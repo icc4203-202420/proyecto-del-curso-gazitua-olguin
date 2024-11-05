@@ -14,7 +14,12 @@ const Stack = createNativeStackNavigator<BeersStackParamList>();
 
 export default function BeersLayout() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+    screenOptions={{
+      headerStyle: { backgroundColor: '#000' }, 
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontWeight: 'bold' }, 
+    }}>
       <Stack.Screen name="SearchBeer" component={SearchBeer} options={{ title: 'Cervezas' }} />
       <Stack.Screen name="BeerDetails" component={BeerDetails} options={{ title: 'Detalles de la Cerveza' }} />
       {/* Configuramos el modal con la opción de presentación */}
@@ -22,7 +27,7 @@ export default function BeersLayout() {
         name="ReviewModal"
         component={ReviewModal}
         options={{ 
-          presentation: 'modal', // Estilo de modal
+          presentation: 'modal', 
           title: 'Escribir Reseña',
         }}
       />

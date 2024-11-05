@@ -79,13 +79,14 @@ export default function BeerDetails() {
       <Tab.Navigator
         screenOptions={{
           tabBarIndicatorStyle: { backgroundColor: '#FF9800' },
-          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold' },
+          tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
           tabBarStyle: { backgroundColor: '#000' },
+          
         }}
       >
         <Tab.Screen name="Info" children={() => <BeerInfoTab beer={beer} />} />
         <Tab.Screen name="Bars" children={() => <BeerBarsTab bars={beer.bars} />} />
-        <Tab.Screen name="Reviews" children={() => <BeerReviewsTab reviews={beer.reviews} />} />
+        <Tab.Screen name="Reseñas" children={() => <BeerReviewsTab reviews={beer.reviews} />} />
       </Tab.Navigator>
 
       {/* Botón flotante para abrir el modal */}
