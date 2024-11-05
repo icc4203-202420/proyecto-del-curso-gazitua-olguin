@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: 26,
+    fontSize: 24,
     color: '#FF9800',
     fontWeight: 'bold',
     textAlign: 'center',
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 16,
   },
-  attendanceConfirmed: { color: '#FF9800', fontSize: 14, fontWeight: '600' },
+  attendanceConfirmed: { color: '#FF9800', fontSize: 16, fontWeight: '600' },
   attendButton: {
     backgroundColor: '#FF9800',
     paddingVertical: 10,

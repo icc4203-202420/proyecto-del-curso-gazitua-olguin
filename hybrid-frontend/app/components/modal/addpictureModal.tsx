@@ -97,7 +97,7 @@ const SharePhoto = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 16, alignItems: 'center', backgroundColor: '#000' },
+  container: { padding: 16, alignItems: 'center', backgroundColor: '#000', flex: 1 },
   image: { width: 200, height: 200, marginVertical: 16 },
   input: {
     width: '100%',
