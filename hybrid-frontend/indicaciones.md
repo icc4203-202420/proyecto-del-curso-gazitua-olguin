@@ -38,3 +38,19 @@ y actualizar
 },
 
 para poder utilizarlo en expo
+
+y en hooks/useSession.js actualizar la direccion del backend:
+
+// Obtener y guardar el token de notificación
+const pushToken = await registerForPushNotificationsAsync();
+if (pushToken) {
+// Enviar el token al backend
+await fetch('http://192.168.1.85:3001/api/v1/users/push_token', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'Authorization': `Bearer ${token}`
+},
+body: JSON.stringify({ push_token: pushToken })
+});
+}
