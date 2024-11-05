@@ -102,12 +102,7 @@ export default function BeerDetails() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-  },
+  header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',padding: 16,},
   title: { fontSize: 24, color: '#FF9800', fontWeight: 'bold' },
   ratingContainer: { flexDirection: 'row', alignItems: 'center' },
   ratingText: { fontSize: 18, color: '#FFFFFF', marginLeft: 8 },

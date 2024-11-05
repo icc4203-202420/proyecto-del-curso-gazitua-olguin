@@ -43,24 +43,57 @@ class API::V1::UsersController < ApplicationController
   end
   
   def friendships
-    if @user.nil?
-      render json: { error: 'User not found' }, status: :not_found
-      return
+    # Método para listar amistades o crear una nueva amistad
+    if request.get?
+      @friends = @user.friends
+      render json: @friends, status: :ok
+    elsif request.post?
+      create_friendship
     end
-    @friends = @user.friends
-    render json: @friends, status: :ok
   end
 
   def create_friendship
+    # Verificar si el usuario autenticado es el que intenta agregar un amigo
+    if current_user.id != @user.id
+      render json: { error: 'Usuario no autorizado' }, status: :unauthorized
+      return
+    end
+  
     @friend = User.find(params[:friend_id])
-    @friendship = @user.friendships.build(friend: @friend)
+    @bar = Bar.find_by(id: params[:bar_id])
+    @event = Event.find_by(id: params[:event_id]) if params[:event_id].present?
+  
+    # Crear la amistad usando current_user directamente
+    @friendship = current_user.friendships.build(friend: @friend, bar: @bar, event: @event)
+  
     if @friendship.save
+      puts "Amistad creada con éxito entre el usuario #{current_user.id} y el amigo #{@friend.id} en el bar #{@bar.id}"
       render json: @friendship, status: :created
+  
+      # Enviar notificación push al usuario seguido
+      if @friend.push_token.present?
+        PushNotificationService.send_notification(
+          to: @friend.push_token,
+          title: 'Nuevo seguidor en BeerApp!',
+          body: "#{current_user.handle} te ha seguido.",
+          data: { screen: 'Inicio' }
+        )
+      end
     else
+      puts "Error al crear amistad: #{@friendship.errors.full_messages}"
       render json: @friendship.errors, status: :unprocessable_entity
     end
   end
 
+def update_push_token
+    # Actualiza el token de notificación únicamente para el usuario actual
+    if current_user.update(push_token: params[:push_token])
+      render json: { message: 'Push token updated successfully' }, status: :ok
+    else
+      render json: { errors: current_user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+  
   private
 
   def set_user
@@ -77,6 +110,6 @@ class API::V1::UsersController < ApplicationController
   end
 
   def friendship_params
-    params.require(:friendship). permit(:friend_id)
+    params.require(:friendship).permit(:friend_id, :bar_id, :event_id)
   end
 end

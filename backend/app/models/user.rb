@@ -9,6 +9,9 @@ class User < ApplicationRecord
   validates :email, email: true
   validates :handle, presence: true, uniqueness: true, length: { minimum: 3 }
 
+  # Relación con notificaciones push
+  validates :push_token, uniqueness: true, allow_nil: true
+
   has_many :reviews
   has_many :beers, through: :reviews
   has_one :address
@@ -16,6 +19,10 @@ class User < ApplicationRecord
   has_many :attendances
   has_many :events, through: :attendances
   has_many :friendships
+  has_many :taggings
+  has_many :tagged_pictures, through: :taggings, source: :event_picture
+
+  has_many :pending_notifications, dependent: :destroy
 
   accepts_nested_attributes_for :reviews, allow_destroy: true
   accepts_nested_attributes_for :address, allow_destroy: true

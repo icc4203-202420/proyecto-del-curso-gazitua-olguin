@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TextInput, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { SearchBar } from '@rneui/themed';
 import api from '../../services/api';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -40,11 +41,14 @@ export default function SearchBeer() {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
+      <SearchBar
         placeholder="Buscar cerveza..."
         value={search}
         onChangeText={setSearch}
+        platform="default"
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInput}
+        lightTheme
       />
       <FlatList
         style={styles.Flatlist}
@@ -67,18 +71,14 @@ export default function SearchBeer() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop:16,
+    paddingTop: 16,
     paddingHorizontal: 16,
     backgroundColor: '#000',
   },
-  searchInput: {
-    backgroundColor: '#fff',
-    padding: 8,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  Flatlist:{
-    paddingTop:16,
+  searchBarContainer: { backgroundColor: '#000', borderBottomColor: 'transparent', borderTopColor: 'transparent' },
+  searchBarInput: { backgroundColor: '#1C1C1C' },
+  Flatlist: {
+    paddingTop: 16,
   },
   beerItem: {
     padding: 12,

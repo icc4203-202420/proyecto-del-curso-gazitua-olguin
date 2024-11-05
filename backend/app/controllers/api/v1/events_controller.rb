@@ -2,7 +2,7 @@ class API::V1::EventsController < ApplicationController
   include ImageProcessing
   include Authenticable
   respond_to :json
-  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :add_picture]
+  before_action :set_event, only: [:show, :update, :destroy, :check_in, :attendees, :pictures]
   before_action :verify_jwt_token, only: [:create, :update, :destroy, :check_in]
 
   def index
@@ -22,7 +22,7 @@ class API::V1::EventsController < ApplicationController
         thumbnail_url: url_for(@event.thumbnail) }), 
         status: :ok
     else
-      render json: { event: @event.as_json }, status: :ok
+      render json: { event: @event.as_json(include: :bar) }, status: :ok
     end
   end
 
@@ -63,6 +63,9 @@ class API::V1::EventsController < ApplicationController
     else
       attendance.check_in
       render json: { message: "Has confirmado tu asistencia." }, status: :ok
+
+      # Notificar a todos los amigos del usuario sobre el check-in
+      notify_friends_about_check_in(current_user, @event)
     end
   end
 
@@ -77,19 +80,39 @@ class API::V1::EventsController < ApplicationController
     }, status: :ok
   end
 
-  # Añadir imagen a evento existente
-  def add_picture
-    @event_picture = @event.event_pictures.build(event_picture_params)
-    @event_picture.user = current_user
+  # Obtener todas las fotos asociadas con un evento
+  def pictures
+    if @event.event_pictures.any?
+      pictures_data = @event.event_pictures.map do |event_picture|
+        if event_picture.image.attached?
+          {
+            id: event_picture.id,
+            image_url: url_for(event_picture.image),
+            description: event_picture.description,
+            tagged_users: event_picture.tagged_users.map(&:handle) 
+          }
+        end
+      end.compact
 
-    if @event_picture.save
-      render json: { message: 'Imagen subida exitosamente.', event_picture: @event_picture }, status: :created
+      render json: pictures_data
     else
-      render json: { errors: @event_picture.errors.full_messages }, status: :unprocessable_entity
+      render json: { message: "No pictures found for this event." }, status: :not_found
     end
   end
 
   private
+  def notify_friends_about_check_in(user, event)
+    user.friends.each do |friend|
+      next unless friend.push_token.present?
+
+      PushNotificationService.send_notification(
+        to: friend.push_token,
+        title: "#{user.handle} asistirá a un evento",
+        body: "#{user.handle} ha confirmado asistencia al evento #{event.name}.",
+        data: { screen: 'Inicio' } # Cambia a la pantalla que desees mostrar al abrir la app
+      )
+    end
+  end
 
   def set_event
     @event = Event.find_by(id: params[:id])
@@ -108,6 +131,6 @@ class API::V1::EventsController < ApplicationController
   end
 
   def event_picture_params
-    params.require(:event_picture).permit(:image)
+    params.require(:event_picture).permit(:image, :description)
   end
 end

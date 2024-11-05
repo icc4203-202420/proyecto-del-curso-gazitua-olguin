@@ -21,10 +21,7 @@ const LoginPage = () => {
 
     try {
       setLoading(true);
-      console.log('Datos enviados al login:', { email, password });
-
       const data = await loginService(email, password);
-      console.log('Respuesta recibida:', data);
 
       if (data?.status?.code === 200) {
         const { token, user } = data.status.data;
@@ -40,7 +37,6 @@ const LoginPage = () => {
         Alert.alert('Error', 'Credenciales incorrectas.');
       }
     } catch (error) {
-      console.error('Error en el login:', error?.response?.data || error.message);
       Alert.alert('Error', 'Hubo un problema al iniciar sesión.');
     } finally {
       setLoading(false);
