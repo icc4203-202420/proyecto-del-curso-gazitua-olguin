@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_04_214336) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_05_013034) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -175,6 +175,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_04_214336) do
     t.check_constraint "user_id != friend_id"
   end
 
+  create_table "pending_notifications", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "title"
+    t.string "body"
+    t.json "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_pending_notifications_on_user_id"
+  end
+
   create_table "review_counters", force: :cascade do |t|
     t.integer "count"
     t.datetime "created_at", null: false
@@ -215,6 +225,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_04_214336) do
     t.string "jti", null: false
     t.string "handle"
     t.string "push_token"
+    t.text "new_followers", default: "[]"
+    t.datetime "last_active_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["handle"], name: "index_users_on_handle", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
@@ -241,6 +253,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_04_214336) do
   add_foreign_key "friendships", "events"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
+  add_foreign_key "pending_notifications", "users"
   add_foreign_key "reviews", "beers", on_delete: :cascade
   add_foreign_key "reviews", "users"
   add_foreign_key "taggings", "event_pictures"

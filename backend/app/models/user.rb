@@ -22,6 +22,8 @@ class User < ApplicationRecord
   has_many :taggings
   has_many :tagged_pictures, through: :taggings, source: :event_picture
 
+  has_many :pending_notifications, dependent: :destroy
+
   accepts_nested_attributes_for :reviews, allow_destroy: true
   accepts_nested_attributes_for :address, allow_destroy: true
 
