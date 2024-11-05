@@ -63,6 +63,9 @@ class API::V1::EventsController < ApplicationController
     else
       attendance.check_in
       render json: { message: "Has confirmado tu asistencia." }, status: :ok
+
+      # Notificar a todos los amigos del usuario sobre el check-in
+      notify_friends_about_check_in(current_user, @event)
     end
   end
 
@@ -98,6 +101,18 @@ class API::V1::EventsController < ApplicationController
   end
 
   private
+  def notify_friends_about_check_in(user, event)
+    user.friends.each do |friend|
+      next unless friend.push_token.present?
+
+      PushNotificationService.send_notification(
+        to: friend.push_token,
+        title: "#{user.handle} asistirá a un evento",
+        body: "#{user.handle} ha confirmado asistencia al evento #{event.name}.",
+        data: { screen: 'Inicio' } # Cambia a la pantalla que desees mostrar al abrir la app
+      )
+    end
+  end
 
   def set_event
     @event = Event.find_by(id: params[:id])

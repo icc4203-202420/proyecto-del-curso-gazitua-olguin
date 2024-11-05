@@ -10,3 +10,7 @@ baseURL: 'http://192.168.1.96:3001/api/v1',
 });
 
 cambiar la baseURL por tu IP
+
+Usuario de prueba
+josefa.olguin@gmail.com
+123456
