@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     const pushToken = await registerForPushNotificationsAsync();
     if (pushToken) {
       // Enviar el token al backend
-      await fetch('http://192.168.1.85:3001/api/v1/users/push_token', {
+      await fetch('http://192.168.1.98:3001/api/v1/users/push_token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 
 // Crear instancia de Axios
 const api = axios.create({
-  baseURL: 'http://192.168.1.85:3001/api/v1',
+  baseURL: 'http://192.168.1.98:3001/api/v1',
 });
 
 // Variable para almacenar el ID del interceptor
