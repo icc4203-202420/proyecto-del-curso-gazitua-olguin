@@ -16,21 +16,23 @@ class EventPicture < ApplicationRecord
   def broadcast_to_friends_feed
     return unless image.attached?
     image_url = Rails.application.routes.url_helpers.url_for(image)
-
+  
+    message = {
+      id: id,
+      type: 'event_post', # Tipo definido como publicación de evento
+      image_url: image_url,
+      description: description,
+      tagged_users: tagged_users.pluck(:handle),
+      event_name: event.name,
+      bar_name: event.bar&.name,
+      country: event.bar.address&.country&.name,
+      published_at: created_at,
+      event_id: event.id
+    }
+  
     user.friends.each do |friend|
-      message = {
-        id: id,
-        image_url: image_url,
-        description: description,
-        tagged_users: tagged_users.pluck(:handle),
-        event_name: event.name,
-        bar_name: event.bar&.name,
-        country: event.bar.address&.country&.name,
-        published_at: created_at,
-        event_id: event.id
-      }
-
       ActionCable.server.broadcast("feed_channel_user_#{friend.id}", message)
     end
   end
+  
 end

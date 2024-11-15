@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_15_044405) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -171,15 +171,30 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_044405) do
 
   create_table "feed_posts", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "event_id", null: false
+    t.integer "event_id"
     t.text "description"
     t.string "event_name"
     t.string "bar_name"
     t.string "country"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "beer_id"
+    t.string "address"
     t.index ["event_id"], name: "index_feed_posts_on_event_id"
     t.index ["user_id"], name: "index_feed_posts_on_user_id"
+  end
+
+  create_table "feed_reviews", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "beer_id", null: false
+    t.string "description"
+    t.string "bar_name"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "address"
+    t.index ["beer_id"], name: "index_feed_reviews_on_beer_id"
+    t.index ["user_id"], name: "index_feed_reviews_on_user_id"
   end
 
   create_table "friendships", force: :cascade do |t|
@@ -255,8 +270,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_044405) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "countries"
   add_foreign_key "addresses", "users"
   add_foreign_key "attendances", "events"
@@ -275,6 +288,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_044405) do
   add_foreign_key "feed_post_taggings", "users"
   add_foreign_key "feed_posts", "events"
   add_foreign_key "feed_posts", "users"
+  add_foreign_key "feed_reviews", "beers"
+  add_foreign_key "feed_reviews", "users"
   add_foreign_key "friendships", "bars"
   add_foreign_key "friendships", "events"
   add_foreign_key "friendships", "users"

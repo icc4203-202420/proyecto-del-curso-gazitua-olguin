@@ -53,6 +53,7 @@ Rails.application.routes.draw do
       
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
       resources :feed_posts, only: [:index]
+      resources :feed_reviews, only: [:index]
     end
   end
 end

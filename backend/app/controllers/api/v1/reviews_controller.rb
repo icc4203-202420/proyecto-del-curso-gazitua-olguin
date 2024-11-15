@@ -1,4 +1,5 @@
 class API::V1::ReviewsController < ApplicationController
+  include Authenticable
   respond_to :json
   before_action :authenticate_user! 
   before_action :set_user, only: [:index, :create]
@@ -18,8 +19,20 @@ class API::V1::ReviewsController < ApplicationController
   end
 
   def create
-    @review = @user.reviews.build(review_params)
+    @review = current_user.reviews.build(review_params)
+
+
     if @review.save
+
+      feed_review = FeedReview.create!(
+        user: current_user,
+        beer: @review.beer,
+        description: "Evaluó la cerveza #{@review.beer.name} con #{@review.rating}/5.",
+        bar_name: @review.beer.bars.first&.name || "Sin bar asociado",
+        country: @review.beer.bars.first&.address&.country&.name || "Desconocido",
+        address: @review.beer.bars.first&.address&.line1 || "Sin dirección"
+      )
+      
       render json: @review, status: :created, location: api_v1_review_url(@review)
     else
       render json: @review.errors, status: :unprocessable_entity

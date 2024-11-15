@@ -4,6 +4,7 @@ class FeedChannel < ApplicationCable::Channel
     # Autenticación del usuario en el canal
     reject unless current_user
 
+    Rails.logger.info "Usuario conectado al canal: #{current_user.id}"
     # Identificar al canal del usuario autenticado
     stream_from "feed_channel_user_#{current_user.id}"
   end
