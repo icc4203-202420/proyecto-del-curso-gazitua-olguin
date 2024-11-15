@@ -9,6 +9,7 @@ import BeersLayout from './beers/_layout'; // Incluye BeersLayout
 import BarsLayout from './bars/_layout'; // Incluye BarsLayout
 import UsersLayout from './users/_layout'; // Importamos UsersLayout
 import EventsLayout from './events/_layout'; // Importamos UsersLayout
+import FeedPage from './FeedPage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -43,6 +44,9 @@ function MainTabs() {
             case 'Home':
                 iconName = focused ? 'home' : 'home-outline';
               break;
+              case 'Feed':
+              iconName = focused ? 'newspaper' : 'newspaper-outline';
+              break;
               case 'Me':
                 iconName = focused ? 'person' : 'person-outline';
               break;
@@ -70,6 +74,7 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomePage} />
+      <Tab.Screen name="Feed" component={FeedPage} />
       <Tab.Screen name="Beers" component={BeersLayout} />
       <Tab.Screen name="Bars" component={BarsLayout} />
       <Tab.Screen name="Events" component={EventsLayout} />

@@ -4,6 +4,13 @@ rails s -b 0.0.0.0 -p 3001
 frontend:
 npx expo start -c
 
+en archivo app/services/feedService.js
+
+const WEBSOCKET_URL = 'ws://192.168.1.83:3001/cable';
+
+en archivo config/environments/development.rb
+Rails.application.routes.default_url_options[:host] = '192.168.x.x' # Usa tu IP local
+
 en archivo app/services/api.js:
 const api = axios.create({
 baseURL: 'http://192.168.1.96:3001/api/v1',
