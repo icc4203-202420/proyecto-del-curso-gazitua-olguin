@@ -1,11 +1,18 @@
 import { useState } from 'react';
-import { 
-  View, Text, TextInput, Alert, ActivityIndicator, StyleSheet, TouchableOpacity 
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { useSession } from '../../../hooks/useSession'; 
-import { AirbnbRating } from '@rneui/themed';  // Importamos AirbnbRating para mejor control
+import { useSession } from '../../../hooks/useSession';
 import api from '../../services/api';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Para los íconos de cerveza
 
 export default function ReviewModal() {
   const route = useRoute();
@@ -13,7 +20,6 @@ export default function ReviewModal() {
   const { beerId } = route.params || {};
 
   if (!beerId) {
-    console.error('No se recibió beerId en los parámetros.');
     Alert.alert('Error', 'No se encontró la cerveza a reseñar.');
     navigation.goBack();
     return null;
@@ -45,7 +51,7 @@ export default function ReviewModal() {
             rating,
             text,
             beer_id: beerId,
-            user_id: session.user_id  
+            user_id: session.user_id,
           },
         },
         {
@@ -67,6 +73,22 @@ export default function ReviewModal() {
     }
   };
 
+  const renderBeers = () => {
+    return Array.from({ length: 5 }, (_, index) => {
+      const filled = index < rating;
+      return (
+        <TouchableWithoutFeedback key={index} onPress={() => setRating(index + 1)}>
+          <MaterialCommunityIcons
+            name={filled ? 'beer' : 'beer-outline'}
+            size={40}
+            color={filled ? '#FFD700' : '#999'}
+            style={{ marginHorizontal: 4 }}
+          />
+        </TouchableWithoutFeedback>
+      );
+    });
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -77,7 +99,11 @@ export default function ReviewModal() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Escribe una Reseña</Text>
+      <Text style={styles.title}>Califica la Cerveza</Text>
+
+      <View style={styles.beersContainer}>
+        <View style={styles.beers}>{renderBeers()}</View>
+      </View>
 
       <TextInput
         style={styles.input}
@@ -88,14 +114,6 @@ export default function ReviewModal() {
         maxLength={300}
         value={text}
         onChangeText={setText}
-      />
-
-      <AirbnbRating
-        count={5} // 5 estrellas
-        reviews={["Mala", "Regular", "Buena", "Muy buena", "Excelente"]} // Opcional
-        defaultRating={rating} // Valor inicial
-        size={30}
-        onFinishRating={(value) => setRating(value)} // Actualizamos el estado
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -119,6 +137,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#fff',
   },
+  beersContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  ratingText: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 10,
+  },
+  beers: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
@@ -132,7 +163,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-
   button: {
     backgroundColor: '#FF9800',
     padding: 15,
