@@ -11,6 +11,9 @@ class User < ApplicationRecord
 
   # Relación con notificaciones push
   validates :push_token, uniqueness: true, allow_nil: true
+  # Relación con las etiquetas en los posts del feed
+  has_many :feed_post_taggings
+  has_many :tagged_feed_posts, through: :feed_post_taggings, source: :feed_post
 
   has_many :reviews
   has_many :beers, through: :reviews

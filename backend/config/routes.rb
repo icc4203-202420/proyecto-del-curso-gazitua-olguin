@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   }
 
   get "up" => "rails/health#show", as: :rails_health_check
+  
+  mount ActionCable.server => '/cable'
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
@@ -50,6 +52,7 @@ Rails.application.routes.draw do
       end
       
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
+      resources :feed_posts, only: [:index]
     end
   end
 end

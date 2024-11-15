@@ -28,6 +28,12 @@ module Backend
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    #config.active_storage.service_urls_expire_in = 1.hour # Ajusta según tu preferencia
+    config.active_storage.analyzers = [] # Configuración para evitar análisis automático de Active Storage
+
+    config.after_initialize do
+      ActiveStorage::Current.url_options = { host: 'http://localhost:3001' }
+    end
 
     config.action_dispatch.default_headers = {
       'X-Frame-Options' => 'ALLOW-FROM http://localhost:3001',

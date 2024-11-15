@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_05_013034) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_15_044405) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -160,6 +160,28 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_05_013034) do
     t.index ["bar_id"], name: "index_events_on_bar_id"
   end
 
+  create_table "feed_post_taggings", force: :cascade do |t|
+    t.integer "feed_post_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feed_post_id"], name: "index_feed_post_taggings_on_feed_post_id"
+    t.index ["user_id"], name: "index_feed_post_taggings_on_user_id"
+  end
+
+  create_table "feed_posts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "event_id", null: false
+    t.text "description"
+    t.string "event_name"
+    t.string "bar_name"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_feed_posts_on_event_id"
+    t.index ["user_id"], name: "index_feed_posts_on_user_id"
+  end
+
   create_table "friendships", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "friend_id", null: false
@@ -249,6 +271,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_05_013034) do
   add_foreign_key "event_pictures", "events"
   add_foreign_key "event_pictures", "users"
   add_foreign_key "events", "bars"
+  add_foreign_key "feed_post_taggings", "feed_posts"
+  add_foreign_key "feed_post_taggings", "users"
+  add_foreign_key "feed_posts", "events"
+  add_foreign_key "feed_posts", "users"
   add_foreign_key "friendships", "bars"
   add_foreign_key "friendships", "events"
   add_foreign_key "friendships", "users"
