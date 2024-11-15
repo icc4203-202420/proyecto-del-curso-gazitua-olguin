@@ -18,20 +18,22 @@ class Review < ApplicationRecord
       country: beer.bars.first&.address&.country&.name || 'Desconocido',
       address: beer.bars.first&.address&.line1 || 'Sin dirección'
     }
-  
+
     message = {
       id: id,
-      type: 'beer_review', # Tipo definido como reseña de cerveza
+      type: 'beer_review',
+      beer_id: beer.id, # Incluye beer_id explícitamente
       user_handle: user.handle,
       beer: beer_data,
       rating: rating,
       description: text,
       published_at: created_at
     }
-  
+
     user.friends.each do |friend|
       ActionCable.server.broadcast("feed_channel_user_#{friend.id}", message)
     end
   end
+
   
 end

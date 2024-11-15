@@ -98,10 +98,11 @@ export default function EventDetails() {
           tabBarStyle: { backgroundColor: '#000' },
         }}
       >
-        <Tab.Screen name="Info" children={() => <EventInfoTab event={event} />} />
-        <Tab.Screen name="Asistentes" children={() => <EventAttendeesTab attendees={attendees} />} />
-        <Tab.Screen name="Fotos" children={() => <EventPictures eventId={eventId} />} />
-        </Tab.Navigator>
+        <Tab.Screen name="Info" children={() => <EventInfoTab event={event} key={`tab-info-${eventId}`} />} />
+        <Tab.Screen name="Asistentes" children={() => <EventAttendeesTab attendees={attendees} key={`tab-attendees-${eventId}`} />} />
+        <Tab.Screen name="Fotos" children={() => <EventPictures eventId={eventId} key={`tab-pictures-${eventId}`} />} />
+      </Tab.Navigator>
+
 
         {/* Botón flotante para abrir el modal */}
         <TouchableOpacity

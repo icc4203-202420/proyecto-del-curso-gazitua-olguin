@@ -70,17 +70,18 @@ const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
           <View style={styles.detailsContainer}>
             {item.description ? <Text style={styles.description}>{item.description}</Text> : null}
             {item.tagged_users.length > 0 && (
-              <View style={styles.taggedUsersContainer}>
-                <Text style={styles.taggedTitle}>Etiquetados:</Text>
-                <View style={styles.taggedUsersList}>
-                {item.tagged_users.map((user, index) => (
-                    <Text key={index} style={styles.taggedUser}>
-                        {user}
-                    </Text>
+            <View style={styles.taggedUsersContainer}>
+              <Text style={styles.taggedTitle}>Etiquetados:</Text>
+              <View style={styles.taggedUsersList}>
+                {item.tagged_users.map((user) => (
+                  <Text key={user.id} style={styles.taggedUser}>
+                    @{user.handle}
+                  </Text>
                 ))}
-                </View>
               </View>
-            )}
+            </View>
+          )}
+
           </View>
         </View>
       )}

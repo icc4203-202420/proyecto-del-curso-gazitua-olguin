@@ -10,12 +10,14 @@ import {
   RefreshControl 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import { fetchFeedPosts, fetchFeedReviews, subscribeToFeed } from '../services/feedService';
 
 export default function FeedPage() {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
 
   const fetchFeeds = async () => {
     setLoading(true);
@@ -27,6 +29,7 @@ export default function FeedPage() {
         (a, b) => new Date(b.published_at) - new Date(a.published_at)
       );
       setFeed(combinedFeed);
+      console.log(combinedFeed)
     } catch (error) {
       console.error('Error fetching feeds:', error);
     } finally {
@@ -45,6 +48,7 @@ export default function FeedPage() {
 
     const subscribe = async () => {
       await subscribeToFeed((newPost) => {
+        console.log('Nuevo mensaje recibido:', newPost);
         setFeed((prev) => {
           const updatedFeed = [newPost, ...prev];
           return updatedFeed.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
@@ -55,10 +59,37 @@ export default function FeedPage() {
     subscribe();
   }, []);
 
+  const handlePress = (item) => {
+    if (item.type === 'event_post') {
+      if (item.event_id && typeof item.event_id === 'number') {
+        navigation.navigate('EventsLayout', {
+          screen: 'EventDetails',
+          params: { eventId: item.event_id },
+        });
+      } else {
+        console.error('El evento no tiene un ID válido. Datos recibidos:', item);
+      }
+    } else if (item.type === 'beer_review') {
+      if (item.beer_id && typeof item.beer_id === 'number') {
+        navigation.navigate('BeersLayout', {
+          screen: 'BeerDetails',
+          params: { beerId: item.beer_id },
+        });
+      } else {
+        console.error('La reseña no tiene un ID de cerveza válido. Datos recibidos:', item);
+      }
+    }
+  };
+  
+  
   const renderFeedItem = ({ item }) => {
     if (item.type === 'event_post') {
       return (
-        <TouchableOpacity style={styles.feedItem} activeOpacity={0.9}>
+        <TouchableOpacity
+          style={styles.feedItem}
+          activeOpacity={0.9}
+          onPress={() => handlePress(item)}
+        >
           {item.image_url ? (
             <Image source={{ uri: item.image_url }} style={styles.image} />
           ) : (
@@ -83,7 +114,11 @@ export default function FeedPage() {
 
     if (item.type === 'beer_review') {
       return (
-        <TouchableOpacity style={styles.feedItem} activeOpacity={0.9}>
+        <TouchableOpacity
+          style={styles.feedItem}
+          activeOpacity={0.9}
+          onPress={() => handlePress(item)}
+        >
           <Text style={styles.userHandle}>@{item.user_handle}</Text>
           <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
             {item.description || 'Sin descripción'}
