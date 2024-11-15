@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_15_132502) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -129,15 +129,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "event_picture_handles", force: :cascade do |t|
-    t.integer "event_picture_id", null: false
-    t.integer "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["event_picture_id"], name: "index_event_picture_handles_on_event_picture_id"
-    t.index ["user_id"], name: "index_event_picture_handles_on_user_id"
-  end
-
   create_table "event_pictures", force: :cascade do |t|
     t.integer "event_id", null: false
     t.integer "user_id", null: false
@@ -172,14 +163,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
   create_table "feed_posts", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "event_id"
+    t.integer "beer_id"
+    t.string "address"
     t.text "description"
     t.string "event_name"
     t.string "bar_name"
     t.string "country"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "beer_id"
-    t.string "address"
     t.index ["event_id"], name: "index_feed_posts_on_event_id"
     t.index ["user_id"], name: "index_feed_posts_on_user_id"
   end
@@ -190,9 +181,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
     t.string "description"
     t.string "bar_name"
     t.string "country"
+    t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "address"
     t.index ["beer_id"], name: "index_feed_reviews_on_beer_id"
     t.index ["user_id"], name: "index_feed_reviews_on_user_id"
   end
@@ -262,14 +253,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
     t.string "jti", null: false
     t.string "handle"
     t.string "push_token"
-    t.text "new_followers", default: "[]"
-    t.datetime "last_active_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["handle"], name: "index_users_on_handle", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "countries"
   add_foreign_key "addresses", "users"
   add_foreign_key "attendances", "events"
@@ -279,8 +270,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_15_150311) do
   add_foreign_key "bars_beers", "beers"
   add_foreign_key "beers", "brands"
   add_foreign_key "brands", "breweries"
-  add_foreign_key "event_picture_handles", "event_pictures"
-  add_foreign_key "event_picture_handles", "users"
   add_foreign_key "event_pictures", "events"
   add_foreign_key "event_pictures", "users"
   add_foreign_key "events", "bars"

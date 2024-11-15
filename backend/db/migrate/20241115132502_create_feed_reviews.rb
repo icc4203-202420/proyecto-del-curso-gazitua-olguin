@@ -6,6 +6,7 @@ class CreateFeedReviews < ActiveRecord::Migration[6.1]
       t.string :description
       t.string :bar_name
       t.string :country
+      t.string :address # Incluimos la columna address
 
       t.timestamps
     end
