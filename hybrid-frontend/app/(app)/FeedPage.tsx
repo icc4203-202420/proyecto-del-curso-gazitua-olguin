@@ -29,7 +29,6 @@ export default function FeedPage() {
         (a, b) => new Date(b.published_at) - new Date(a.published_at)
       );
       setFeed(combinedFeed);
-      console.log(combinedFeed)
     } catch (error) {
       console.error('Error fetching feeds:', error);
     } finally {
@@ -48,7 +47,6 @@ export default function FeedPage() {
 
     const subscribe = async () => {
       await subscribeToFeed((newPost) => {
-        console.log('Nuevo mensaje recibido:', newPost);
         setFeed((prev) => {
           const updatedFeed = [newPost, ...prev];
           return updatedFeed.sort((a, b) => new Date(b.published_at) - new Date(a.published_at));
