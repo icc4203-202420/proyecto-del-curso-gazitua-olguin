@@ -331,19 +331,49 @@ if (item.type === 'beer_review') {
         onEndReachedThreshold={0.5}
       />
   
-      {filteredFeed.length === 0 && (
-        <Text style={styles.noResultsText}>
-          No se encontraron publicaciones para los filtros aplicados.
-        </Text>
-      )}
-    </View>
+        {filteredFeed.length === 0 && (
+          <View style={styles.emptyFeedContainer}>
+            <Image
+              source={require('../../assets/empty-feed.png')}
+              style={styles.icon}
+            />
+            <Text style={styles.noResultsText}>
+              ¡No hay nada por aquí!
+            </Text>
+            <Text style={styles.suggestionText}>
+              Sigue a tus amigos o visita eventos para empezar a llenar tu feed.
+            </Text>
+          </View>
+        )}
+      </View>
   );
-  
-  
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
+  noResultsText: {
+    color: '#FF9800',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  suggestionText: {
+    color: '#B0B0B0',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 10,
+    paddingHorizontal: 20,
+  },
+  emptyFeedContainer: {
+    alignItems: 'center',
+    flex: 1
+  },
+  icon: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
   filterContainer: { flexDirection: 'row', padding: 10, justifyContent: 'space-between' },
   filterButton: { backgroundColor: '#FF9800', padding: 10, borderRadius: 5 },
   filterText: { color: '#FFF', fontSize: 14 },
@@ -406,12 +436,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 20,
     fontSize: 16,
-  },
-  noResultsText: {
-    color: '#FF9800',
-    textAlign: 'center',
-    fontSize: 18,
-    marginVertical: 20,
   },
   separator: {
     height: 1,

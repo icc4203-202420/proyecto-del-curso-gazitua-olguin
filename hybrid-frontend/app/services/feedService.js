@@ -66,11 +66,21 @@ export const subscribeToFeed = async (onReceived) => {
 };
 
 export const fetchFeedPosts = async () => {
-  const response = await fetch('http://192.168.1.83:3001/api/v1/feed_posts');
-  return response.json();
+  const token = await SecureStore.getItemAsync('token');
+  const response = await fetch('http://192.168.1.83:3001/api/v1/feed_posts', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  console.log('Feed Posts Response:', data);
+  return data;
 };
 
 export const fetchFeedReviews = async () => {
-  const response = await fetch('http://192.168.1.83:3001/api/v1/feed_reviews');
-  return response.json();
+  const token = await SecureStore.getItemAsync('token');
+  const response = await fetch('http://192.168.1.83:3001/api/v1/feed_reviews', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await response.json();
+  console.log('Feed Reviews Response:', data);
+  return data;
 };
