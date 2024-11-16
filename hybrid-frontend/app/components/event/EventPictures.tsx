@@ -51,6 +51,7 @@ const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
       <View style={styles.emptyContainer}>
         <MaterialIcons name="camera-alt" size={50} color="#FF9800" />
         <Text style={styles.emptyText}>No hay fotos disponibles para este evento.</Text>
+        <Text style={styles.emptySubText}>Sé el primero en subir una foto!</Text>
       </View>
     );
   }
@@ -59,7 +60,8 @@ const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
   const imageSize = Dimensions.get('window').width / numColumns;
 
   return (
-    <FlatList
+    <View style={styles.emptyContainer}>
+      <FlatList
       data={pictures}
       keyExtractor={(item) => item.id.toString()}
       numColumns={numColumns}
@@ -86,6 +88,7 @@ const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
         </View>
       )}
     />
+    </View>
   );
 };
 
@@ -97,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000',
   },
-  emptyText: { color: '#FF9800', textAlign: 'center', marginTop: 10, fontSize: 16, fontWeight: 'bold' },
+  emptyText: { color: '#FF9800', textAlign: 'center', marginTop: 10, fontSize: 20, fontWeight: 'bold' },
   grid: { backgroundColor: '#000', paddingHorizontal: 3 },
   pictureContainer: {
     margin: 1,
@@ -132,6 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 15,
   },
+  emptySubText: {color: '#FFF',fontSize: 16, },
 });
 
 export default EventPicturesTab;

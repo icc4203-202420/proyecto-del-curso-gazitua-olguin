@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Asegúrate de tener instalada esta librería
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -10,7 +11,15 @@ export default function BeerBarsTab({ bars }) {
   const navigation = useNavigation<NativeStackNavigationProp<BeersStackParamList>>();
 
   if (!bars || bars.length === 0) {
-    return <Text style={styles.text}>No hay bares disponibles.</Text>;
+    return (
+      <View style={styles.emptyContainer}>
+        <MaterialCommunityIcons name="storefront-outline" size={60} color="#FF9800" />
+        <Text style={styles.emptyText}>No hay bares disponibles.</Text>
+        <Text style={styles.emptySubText}>
+          Aún no se han registrado bares para esta cerveza. ¡Vuelve más tarde!
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -38,8 +47,44 @@ export default function BeerBarsTab({ bars }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  barItem: { padding: 10, backgroundColor: '#1C1C1C', marginVertical: 16, borderRadius: 10 },
-  barName: { fontSize: 18, color: '#FF9800' },
-  text: { fontSize: 18, color: '#FFFFFF', textAlign: 'center', marginTop: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    paddingHorizontal: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#FF9800',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  emptySubText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 22,
+  },
+  barItem: {
+    padding: 10,
+    backgroundColor: '#1C1C1C',
+    marginVertical: 16,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  barName: {
+    fontSize: 18,
+    color: '#FF9800',
+  },
 });
