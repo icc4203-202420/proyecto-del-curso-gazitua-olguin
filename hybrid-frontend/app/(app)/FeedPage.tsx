@@ -29,6 +29,7 @@ export default function FeedPage() {
         (a, b) => new Date(b.published_at) - new Date(a.published_at)
       );
       setFeed(combinedFeed);
+      console.log(combinedFeed)
     } catch (error) {
       console.error('Error fetching feeds:', error);
     } finally {
@@ -110,31 +111,29 @@ export default function FeedPage() {
       );
     }
 
-    if (item.type === 'beer_review') {
-      return (
-        <TouchableOpacity
-          style={styles.feedItem}
-          activeOpacity={0.9}
-          onPress={() => handlePress(item)}
-        >
-          <Text style={styles.userHandle}>@{item.user_handle}</Text>
-          <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
-            {item.description || 'Sin descripción'}
-          </Text>
-          {item.beer && (
-            <Text style={styles.beerDetails}>
-              {item.beer.name} ({item.beer.avg_rating || 'N/A'}/5)
-            </Text>
-          )}
-          <Text style={styles.barName}>
-            {item.beer?.bar_name || 'No bar info'}, {item.beer?.country || 'No country info'}
-          </Text>
-          <Text style={styles.timestamp}>
-            {new Date(item.published_at).toLocaleString()}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
+if (item.type === 'beer_review') {
+  return (
+    <TouchableOpacity
+      style={styles.feedItem}
+      activeOpacity={0.9}
+      onPress={() => handlePress(item)}
+    >
+      <Text style={styles.userHandle}>@{item.user_handle}</Text>
+      <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+        {item.description || 'Sin descripción'}
+      </Text>
+      <Text style={styles.beerDetails}>
+        {item.beer_details?.name} ({item.beer_details?.avg_rating || 'N/A'}/5)
+      </Text>
+      <Text style={styles.barName}>
+        {item.bar_name || 'No bar info'}, {item.country || 'No country info'}
+      </Text>
+      <Text style={styles.timestamp}>
+        {new Date(item.published_at).toLocaleString()}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
     return null;
   };

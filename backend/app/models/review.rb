@@ -7,8 +7,12 @@ class Review < ApplicationRecord
   validates :text, presence: true, length: { minimum: 15, tokenizer: ->(str) { str.scan(/\w+/) }, too_short: "must have at least 15 words" }
 
   after_create_commit :broadcast_to_friends_feed
+  after_save :update_beer_rating
 
   private
+  def update_beer_rating
+    beer.update_avg_rating
+  end
 
   def broadcast_to_friends_feed
     beer_data = {
