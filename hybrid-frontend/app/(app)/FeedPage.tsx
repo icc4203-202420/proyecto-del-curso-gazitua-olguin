@@ -195,70 +195,130 @@ if (item.type === 'beer_review') {
         onRequestClose={() => setFilterModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-        <ScrollView contentContainerStyle={styles.modalContent}>
-          <Text style={styles.modalTitle}>Selecciona un filtro</Text>
-          
-          <Text style={styles.modalSubtitle}>Bares</Text>
-          {filterOptions.bars?.map((bar) => (
-            <TouchableOpacity key={bar} onPress={() => handleFilter('bar', bar)}>
-              <Text style={styles.modalOption}>{bar}</Text>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <Text style={styles.modalTitle}>Selecciona un filtro</Text>
+  
+            {Object.keys(filterOptions).length === 0 ? (
+              <Text style={styles.noOptionsText}> </Text>
+            ) : (
+              <>
+                <Text style={styles.modalSubtitle}>Bares</Text>
+                {filterOptions.bars?.map((bar) => (
+                  <TouchableOpacity
+                    key={bar}
+                    onPress={() => {
+                      handleFilter('bar', bar);
+                    }}
+                  >
+                    <Text style={styles.modalOption}>
+                      {bar}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+  
+                <View style={styles.separator} />
+  
+                <Text style={styles.modalSubtitle}>Países</Text>
+                {filterOptions.countries?.map((country) => (
+                  <TouchableOpacity
+                    key={country}
+                    onPress={() => {
+                      handleFilter('country', country);
+                    }}
+                  >
+                    <Text style={styles.modalOption}>
+                      {country}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+  
+                <View style={styles.separator} />
+  
+                <Text style={styles.modalSubtitle}>Amistades</Text>
+                {filterOptions.friends?.map((friend) => (
+                  <TouchableOpacity
+                    key={friend}
+                    onPress={() => {
+                      handleFilter('friend', friend);
+                    }}
+                  >
+                    <Text style={styles.modalOption}>
+                      {friend}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+  
+                <View style={styles.separator} />
+  
+                <Text style={styles.modalSubtitle}>Cervezas</Text>
+                {filterOptions.beers?.map((beer) => (
+                  <TouchableOpacity
+                    key={beer}
+                    onPress={() => {
+                      handleFilter('beer', beer);
+                    }}
+                  >
+                    <Text style={styles.modalOption}>
+                      {beer}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+  
+                <View style={styles.separator} />
+              </>
+            )}
+  
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setFilterModalVisible(false)}
+            >
+              <Text style={styles.closeModalText}>Cerrar</Text>
             </TouchableOpacity>
-          ))}
-          
-          <Text style={styles.modalSubtitle}>Países</Text>
-          {filterOptions.countries?.map((country) => (
-            <TouchableOpacity key={country} onPress={() => handleFilter('country', country)}>
-              <Text style={styles.modalOption}>{country}</Text>
-            </TouchableOpacity>
-          ))}
-          
-          <Text style={styles.modalSubtitle}>Amistades</Text>
-          {filterOptions.friends?.map((friend) => (
-            <TouchableOpacity key={friend} onPress={() => handleFilter('friend', friend)}>
-              <Text style={styles.modalOption}>{friend}</Text>
-            </TouchableOpacity>
-          ))}
-          
-          <Text style={styles.modalSubtitle}>Cervezas</Text>
-          {filterOptions.beers?.map((beer) => (
-            <TouchableOpacity key={beer} onPress={() => handleFilter('beer', beer)}>
-              <Text style={styles.modalOption}>{beer}</Text>
-            </TouchableOpacity>
-          ))}
-          
-          <TouchableOpacity
-            style={styles.closeModalButton}
-            onPress={() => setFilterModalVisible(false)}
-          >
-            <Text style={styles.closeModalText}>Cerrar</Text>
-          </TouchableOpacity>
-        </ScrollView>
-
+          </ScrollView>
         </View>
       </Modal>
-      
-      {/* Filtro */}
+  
+      {/* Filtros activos */}
+      <View style={styles.activeFiltersContainer}>
+        {Object.keys(filter).length > 0 ? (
+          Object.entries(filter).map(([key, value]) => (
+            <View key={key} style={styles.activeFilterTag}>
+              <Icon
+                name={
+                  key === 'country'
+                    ? 'earth-outline'
+                    : key === 'bar'
+                    ? 'beer-outline'
+                    : key === 'friend'
+                    ? 'person-outline'
+                    : 'filter-outline'
+                }
+                size={16}
+                color="#FFF"
+              />
+              <Text style={styles.activeFilterText}>
+                {key}: {value}
+              </Text>
+              <TouchableOpacity onPress={() => handleClearFilter(key)}>
+                <Icon name="close-outline" size={16} color="#FFF" />
+              </TouchableOpacity>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noActiveFiltersText}>No hay filtros aplicados</Text>
+        )}
+      </View>
+  
+      {/* Botón para abrir el modal */}
       <View style={styles.filterContainer}>
         <TouchableOpacity
-          style={styles.filterButton}
+          style={styles.filterIconButton}
           onPress={() => setFilterModalVisible(true)}
         >
-          <Text style={styles.filterText}>Seleccionar filtro</Text>
+          <Icon name="filter-outline" size={24} color="#FFF" />
         </TouchableOpacity>
-        {Object.entries(filter).map(([key, value]) => (
-          <TouchableOpacity
-            key={key}
-            style={styles.activeFilter}
-            onPress={() => handleClearFilter(key)}
-          >
-            <Text style={styles.activeFilterText}>
-              {key}: {value} ✕
-            </Text>
-          </TouchableOpacity>
-        ))}
       </View>
-
-
+  
       {/* Lista */}
       <FlatList
         data={filteredFeed}
@@ -268,8 +328,16 @@ if (item.type === 'beer_review') {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReachedThreshold={0.5}
       />
+  
+      {filteredFeed.length === 0 && (
+        <Text style={styles.noResultsText}>
+          No se encontraron publicaciones para los filtros aplicados.
+        </Text>
+      )}
     </View>
   );
+  
+  
 }
 
 const styles = StyleSheet.create({
@@ -288,6 +356,67 @@ const styles = StyleSheet.create({
   closeModalText: { color: '#FFF' },
   activeFilter: { backgroundColor: '#FF9800', padding: 8, borderRadius: 5, marginHorizontal: 5, },
   activeFilterText: { color: '#FFF', fontSize: 12, },
+  activeFiltersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 10,
+    backgroundColor: '#1E1E1E',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  activeFilterTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF9800',
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    margin: 5,
+  },
+
+  noActiveFiltersText: {
+    color: '#BDBDBD',
+    fontSize: 14,
+  },
+  filterIconButton: {
+    backgroundColor: '#FF9800',
+    padding: 10,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  clearAllFiltersButton: {
+    backgroundColor: '#E53935',
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  clearAllFiltersText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  
+  
+  noOptionsText: {
+    color: '#FF9800',
+    textAlign: 'center',
+    marginVertical: 20,
+    fontSize: 16,
+  },
+  noResultsText: {
+    color: '#FF9800',
+    textAlign: 'center',
+    fontSize: 18,
+    marginVertical: 20,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#555',
+    marginVertical: 10,
+  },
+  
   
   feedContainer: {
     paddingBottom: 16,
