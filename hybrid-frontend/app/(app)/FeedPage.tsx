@@ -288,9 +288,11 @@ if (item.type === 'beer_review') {
                   key === 'country'
                     ? 'earth-outline'
                     : key === 'bar'
-                    ? 'beer-outline'
+                    ? 'location-outline'
                     : key === 'friend'
                     ? 'person-outline'
+                    : key === 'beer'
+                    ? 'beer-outline'
                     : 'filter-outline'
                 }
                 size={16}
