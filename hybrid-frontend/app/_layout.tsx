@@ -19,6 +19,7 @@ export default function HomeLayout() {
 const styles = StyleSheet.create({
   safeContiner: {
     flex: 1,
+    backgroundColor: '#000' 
   },
 });
 

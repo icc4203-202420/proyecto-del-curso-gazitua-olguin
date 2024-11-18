@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, ActivityIndicator, TouchableOpacity, RefreshControl, Modal, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  FlatList, 
+  StyleSheet, 
+  Image, 
+  ActivityIndicator, 
+  TouchableOpacity, 
+  RefreshControl, 
+  Modal, 
+  ScrollView 
+} from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { fetchFeedPosts, fetchFeedReviews, subscribeToFeed } from '../services/feedService';
@@ -9,15 +21,16 @@ export default function FeedPage() {
   const [filteredFeed, setFilteredFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filter, setFilter] = useState({});  // { type: 'friend' | 'bar' | 'country' | 'beer', value: string }
+  const [filter, setFilter] = useState({});
   const [filterOptions, setFilterOptions] = useState({});
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
-  // Centraliza la lógica de filtrado
-  const applyFilter = (feed) => {
-    if (!filter) return feed;
-    return feed.filter((item) => {
+  // Función para aplicar filtros
+  const applyFilter = (feedData) => {
+    if (Object.keys(filter).length === 0) return feedData;
+    return feedData.filter((item) => {
       if (filter.friend && item.user_handle !== filter.friend) return false;
       if (filter.bar && item.bar_name !== filter.bar) return false;
       if (filter.country && item.country !== filter.country) return false;
@@ -26,20 +39,16 @@ export default function FeedPage() {
     });
   };
 
-  useEffect(() => {
-    setFilteredFeed(applyFilter(feed));
-  }, [filter, feed]);
-
-// Actualiza las opciones de filtro cuando cambia el feed
+  // Actualizar opciones de filtro cuando cambia el feed
   useEffect(() => {
     const bars = [...new Set(feed.map((item) => item.bar_name).filter(Boolean))];
     const countries = [...new Set(feed.map((item) => item.country).filter(Boolean))];
     const friends = [...new Set(feed.map((item) => item.user_handle).filter(Boolean))];
     const beers = [...new Set(feed.map((item) => item.beer_details?.name).filter(Boolean))];
-
     setFilterOptions({ bars, countries, friends, beers });
   }, [feed]);
 
+  // Función para obtener los feeds
   const fetchFeeds = async () => {
     setLoading(true);
     try {
@@ -57,27 +66,34 @@ export default function FeedPage() {
     }
   };
 
+  // Manejar filtros
   const handleFilter = (type, value) => {
     setFilter((prev) => ({ ...prev, [type]: value }));
+    setFilterModalVisible(false);
   };
 
   const handleClearFilter = (type) => {
     setFilter((prev) => {
       const newFilter = { ...prev };
-      delete newFilter[type]; // Remueve el filtro específico
+      delete newFilter[type];
       return newFilter;
     });
   };
 
+  const handleClearAllFilters = () => {
+    setFilter({});
+  };
+
+  // Manejar refresh
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchFeeds();
     setRefreshing(false);
   };
 
+  // Efecto inicial
   useEffect(() => {
     fetchFeeds();
-
     const subscribe = async () => {
       await subscribeToFeed((newPost) => {
         setFeed((prev) => {
@@ -88,37 +104,30 @@ export default function FeedPage() {
         });
       });
     };
-
     subscribe();
   }, []);
 
+  // Actualizar feed filtrado
   useEffect(() => {
-    setFilteredFeed(applyFilter(feed)); // Aplica el filtro cada vez que cambia el feed o el filtro
+    setFilteredFeed(applyFilter(feed));
   }, [feed, filter]);
 
+  // Manejar navegación
   const handlePress = (item) => {
-    if (item.type === 'event_post') {
-      if (item.event_id && typeof item.event_id === 'number') {
-        navigation.navigate('EventsLayout', {
-          screen: 'EventDetails',
-          params: { eventId: item.event_id },
-        });
-      } else {
-        console.error('El evento no tiene un ID válido. Datos recibidos:', item);
-      }
-    } else if (item.type === 'beer_review') {
-      if (item.beer_id && typeof item.beer_id === 'number') {
-        navigation.navigate('BeersLayout', {
-          screen: 'BeerDetails',
-          params: { beerId: item.beer_id },
-        });
-      } else {
-        console.error('La reseña no tiene un ID de cerveza válido. Datos recibidos:', item);
-      }
+    if (item.type === 'event_post' && item.event_id) {
+      navigation.navigate('EventsLayout', {
+        screen: 'EventDetails',
+        params: { eventId: item.event_id },
+      });
+    } else if (item.type === 'beer_review' && item.beer_id) {
+      navigation.navigate('BeersLayout', {
+        screen: 'BeerDetails',
+        params: { beerId: item.beer_id },
+      });
     }
   };
-  
-  
+
+  // Renderizar items del feed
   const renderFeedItem = ({ item }) => {
     if (item.type === 'event_post') {
       return (
@@ -149,315 +158,337 @@ export default function FeedPage() {
       );
     }
 
-if (item.type === 'beer_review') {
-  return (
-    <TouchableOpacity
-      style={styles.feedItem}
-      activeOpacity={0.9}
-      onPress={() => handlePress(item)}
-    >
-      <Text style={styles.userHandle}>@{item.user_handle}</Text>
-      <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
-        {item.description || 'Sin descripción'}
-      </Text>
-      <Text style={styles.beerDetails}>
-        {item.beer_details?.name} ({item.beer_details?.avg_rating || 'N/A'}/5)
-      </Text>
-      <Text style={styles.barName}>
-        {item.bar_name || 'No bar info'}, {item.country || 'No country info'}
-      </Text>
-      <Text style={styles.timestamp}>
-        {new Date(item.published_at).toLocaleString()}
-      </Text>
-    </TouchableOpacity>
-  );
-}
+    if (item.type === 'beer_review') {
+      return (
+        <TouchableOpacity
+          style={styles.feedItem}
+          activeOpacity={0.9}
+          onPress={() => handlePress(item)}
+        >
+          <Text style={styles.userHandle}>@{item.user_handle}</Text>
+          <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
+            {item.description || 'Sin descripción'}
+          </Text>
+          <Text style={styles.beerDetails}>
+            {item.beer_details?.name} ({item.beer_details?.avg_rating || 'N/A'}/5)
+          </Text>
+          <Text style={styles.barName}>
+            {item.bar_name || 'No bar info'}, {item.country || 'No country info'}
+          </Text>
+          <Text style={styles.timestamp}>
+            {new Date(item.published_at).toLocaleString()}
+          </Text>
+        </TouchableOpacity>
+      );
+    }
 
     return null;
   };
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FF9800" />
-        <Text style={styles.loadingText}>Cargando tu feed...</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FF9800" />
+          <Text style={styles.loadingText}>Cargando tu feed...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Modal de filtro */}
+    <SafeAreaView style={styles.container}>
+      {/* Modal de filtros */}
       <Modal
         visible={filterModalVisible}
         transparent={true}
         animationType="slide"
         onRequestClose={() => setFilterModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <ScrollView contentContainerStyle={styles.modalContent}>
-            <Text style={styles.modalTitle}>Selecciona un filtro</Text>
-  
-            {Object.keys(filterOptions).length === 0 ? (
-              <Text style={styles.noOptionsText}> </Text>
-            ) : (
-              <>
-                <Text style={styles.modalSubtitle}>Bares</Text>
+        <View style={[styles.modalContainer, { paddingTop: insets.top }]}>
+          <ScrollView 
+            contentContainerStyle={[
+              styles.modalContent,
+              { paddingBottom: insets.bottom + 20 }
+            ]}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filtros</Text>
+              <TouchableOpacity
+                style={styles.closeModalButton}
+                onPress={() => setFilterModalVisible(false)}
+              >
+                <Icon name="close-outline" size={24} color="#FFF" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>Bares</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {filterOptions.bars?.map((bar) => (
                   <TouchableOpacity
                     key={bar}
-                    onPress={() => {
-                      handleFilter('bar', bar);
-                    }}
+                    style={[
+                      styles.filterOption,
+                      filter.bar === bar && styles.filterOptionActive
+                    ]}
+                    onPress={() => handleFilter('bar', bar)}
                   >
-                    <Text style={styles.modalOption}>
-                      {bar}
-                    </Text>
+                    <Text style={styles.filterOptionText}>{bar}</Text>
                   </TouchableOpacity>
                 ))}
-  
-                <View style={styles.separator} />
-  
-                <Text style={styles.modalSubtitle}>Países</Text>
+              </ScrollView>
+            </View>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>Países</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {filterOptions.countries?.map((country) => (
                   <TouchableOpacity
                     key={country}
-                    onPress={() => {
-                      handleFilter('country', country);
-                    }}
+                    style={[
+                      styles.filterOption,
+                      filter.country === country && styles.filterOptionActive
+                    ]}
+                    onPress={() => handleFilter('country', country)}
                   >
-                    <Text style={styles.modalOption}>
-                      {country}
-                    </Text>
+                    <Text style={styles.filterOptionText}>{country}</Text>
                   </TouchableOpacity>
                 ))}
-  
-                <View style={styles.separator} />
-  
-                <Text style={styles.modalSubtitle}>Amistades</Text>
+              </ScrollView>
+            </View>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>Amigos</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {filterOptions.friends?.map((friend) => (
                   <TouchableOpacity
                     key={friend}
-                    onPress={() => {
-                      handleFilter('friend', friend);
-                    }}
+                    style={[
+                      styles.filterOption,
+                      filter.friend === friend && styles.filterOptionActive
+                    ]}
+                    onPress={() => handleFilter('friend', friend)}
                   >
-                    <Text style={styles.modalOption}>
-                      {friend}
-                    </Text>
+                    <Text style={styles.filterOptionText}>@{friend}</Text>
                   </TouchableOpacity>
                 ))}
-  
-                <View style={styles.separator} />
-  
-                <Text style={styles.modalSubtitle}>Cervezas</Text>
+              </ScrollView>
+            </View>
+
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSubtitle}>Cervezas</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {filterOptions.beers?.map((beer) => (
                   <TouchableOpacity
                     key={beer}
-                    onPress={() => {
-                      handleFilter('beer', beer);
-                    }}
+                    style={[
+                      styles.filterOption,
+                      filter.beer === beer && styles.filterOptionActive
+                    ]}
+                    onPress={() => handleFilter('beer', beer)}
                   >
-                    <Text style={styles.modalOption}>
-                      {beer}
-                    </Text>
+                    <Text style={styles.filterOptionText}>{beer}</Text>
                   </TouchableOpacity>
                 ))}
-  
-                <View style={styles.separator} />
-              </>
-            )}
-  
-            <TouchableOpacity
-              style={styles.closeModalButton}
-              onPress={() => setFilterModalVisible(false)}
-            >
-              <Text style={styles.closeModalText}>Cerrar</Text>
-            </TouchableOpacity>
+              </ScrollView>
+            </View>
           </ScrollView>
         </View>
       </Modal>
-  
-      {/* Filtros activos */}
-      <View style={styles.activeFiltersContainer}>
-        {Object.keys(filter).length > 0 ? (
-          Object.entries(filter).map(([key, value]) => (
-            <View key={key} style={styles.activeFilterTag}>
-              <Icon
-                name={
-                  key === 'country'
-                    ? 'earth-outline'
-                    : key === 'bar'
-                    ? 'location-outline'
-                    : key === 'friend'
-                    ? 'person-outline'
-                    : key === 'beer'
-                    ? 'beer-outline'
-                    : 'filter-outline'
-                }
-                size={16}
-                color="#FFF"
-              />
-              <Text style={styles.activeFilterText}>
-                {key}: {value}
-              </Text>
-              <TouchableOpacity onPress={() => handleClearFilter(key)}>
-                <Icon name="close-outline" size={16} color="#FFF" />
+
+      <View style={styles.mainContent}>
+        {/* Filtros activos */}
+        {Object.keys(filter).length > 0 && (
+          <View style={styles.activeFiltersContainer}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterTagsContainer}
+            >
+              {Object.entries(filter).map(([key, value]) => (
+                <TouchableOpacity
+                  key={key}
+                  style={styles.activeFilterTag}
+                  onPress={() => handleClearFilter(key)}
+                >
+                  <Icon
+                    name={
+                      key === 'country'
+                        ? 'earth-outline'
+                        : key === 'bar'
+                        ? 'location-outline'
+                        : key === 'friend'
+                        ? 'person-outline'
+                        : 'beer-outline'
+                    }
+                    size={16}
+                    color="#FFF"
+                  />
+                  <Text style={styles.activeFilterText}>{value}</Text>
+                  <Icon name="close-circle" size={16} color="#FFF" />
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={styles.clearAllFiltersButton}
+                onPress={handleClearAllFilters}
+              >
+                <Text style={styles.clearAllFiltersText}>Limpiar filtros</Text>
               </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noActiveFiltersText}>No hay filtros aplicados</Text>
+            </ScrollView>
+          </View>
         )}
-      </View>
-  
-      {/* Botón para abrir el modal */}
-      <View style={styles.filterContainer}>
+
+        {/* Botón de filtro */}
         <TouchableOpacity
-          style={styles.filterIconButton}
+          style={[styles.filterButton, { bottom: insets.bottom + 16, zIndex: 1000 }]}
           onPress={() => setFilterModalVisible(true)}
         >
           <Icon name="filter-outline" size={24} color="#FFF" />
         </TouchableOpacity>
-      </View>
-  
-      {/* Lista */}
-      <FlatList
-        data={filteredFeed}
-        keyExtractor={(item, index) => `${item.type}-${item.id}-${index}`}
-        renderItem={renderFeedItem}
-        contentContainerStyle={styles.feedContainer}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        onEndReachedThreshold={0.5}
-      />
-  
-        {filteredFeed.length === 0 && (
-          <View style={styles.emptyFeedContainer}>
-            <Image
-              source={require('../../assets/empty-feed.png')}
-              style={styles.icon}
+
+        {/* Lista de feed */}
+        <FlatList
+          data={filteredFeed}
+          keyExtractor={(item, index) => `${item.type}-${item.id}-${index}`}
+          renderItem={renderFeedItem}
+          contentContainerStyle={[
+            styles.feedContainer,
+            { paddingBottom: insets.bottom + 80 }
+          ]}
+          refreshControl={
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={handleRefresh}
+              tintColor="#FF9800"
             />
-            <Text style={styles.noResultsText}>
-              ¡No hay nada por aquí!
-            </Text>
-            <Text style={styles.suggestionText}>
-              Sigue a tus amigos o visita eventos para empezar a llenar tu feed.
-            </Text>
-          </View>
-        )}
+          }
+          ListEmptyComponent={() => (
+            <View style={styles.emptyFeedContainer}>
+              <Image
+                source={require('../../assets/empty-feed.png')}
+                style={styles.emptyIcon}
+              />
+              <Text style={styles.noResultsText}>
+                ¡No hay nada por aquí!
+              </Text>
+              <Text style={styles.suggestionText}>
+                Sigue a tus amigos o visita eventos para empezar a llenar tu feed.
+              </Text>
+            </View>
+          )}
+        />
       </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  noResultsText: {
-    color: '#FF9800',
-    textAlign: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+  },
+  modalContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginVertical: 10,
+    color: '#FF9800',
   },
-  suggestionText: {
-    color: '#B0B0B0',
-    textAlign: 'center',
+  modalSection: {
+    marginBottom: 16,
+  },
+  modalSubtitle: {
     fontSize: 16,
-    marginTop: 10,
-    paddingHorizontal: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 8,
   },
-  emptyFeedContainer: {
-    alignItems: 'center',
-    flex: 1
-  },
-  icon: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
-  },
-  filterContainer: { flexDirection: 'row', padding: 10, justifyContent: 'space-between' },
-  filterButton: { backgroundColor: '#FF9800', padding: 10, borderRadius: 5 },
-  filterText: { color: '#FFF', fontSize: 14 },
-  clearFilterButton: { backgroundColor: '#E53935', padding: 10, borderRadius: 5 },
-  clearFilterText: { color: '#FFF', fontSize: 14 },
-  modalContainer: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.8)', justifyContent: 'center' },
-  modalContent: { padding: 20 },
-  modalTitle: { fontSize: 20, color: '#FF9800', marginBottom: 10 },
-  modalSubtitle: { fontSize: 16, color: '#FFF', marginTop: 20 },
-  modalOption: { fontSize: 14, color: '#FFA726', marginVertical: 5 },
-  closeModalButton: { marginTop: 20, alignItems: 'center' },
-  closeModalText: { color: '#FFF' },
-  activeFilter: { backgroundColor: '#FF9800', padding: 8, borderRadius: 5, marginHorizontal: 5, },
-  activeFilterText: { color: '#FFF', fontSize: 12, },
-  activeFiltersContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 10,
+  filterOption: {
     backgroundColor: '#1E1E1E',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  filterOptionActive: {
+    backgroundColor: '#FF9800',
+  },
+  filterOptionText: {
+    color: '#FFF',
+    fontSize: 14,
+  },
+  closeModalButton: {
+    padding: 8,
+  },
+  activeFiltersContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#1E1E1E',
+  },
+  filterTagsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   activeFilterTag: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FF9800',
-    borderRadius: 20,
-    paddingVertical: 5,
     paddingHorizontal: 10,
-    margin: 5,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginRight: 8,
   },
-
-  noActiveFiltersText: {
-    color: '#BDBDBD',
+  activeFilterText: {
+    color: '#FFF',
     fontSize: 14,
-  },
-  filterIconButton: {
-    backgroundColor: '#FF9800',
-    padding: 10,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
+    marginLeft: 6,
+    marginRight: 6,
   },
   clearAllFiltersButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     backgroundColor: '#E53935',
-    padding: 10,
-    borderRadius: 5,
-    marginLeft: 10,
+    borderRadius: 20,
   },
   clearAllFiltersText: {
     color: '#FFF',
     fontSize: 14,
-    fontWeight: 'bold',
   },
-  
-  
-  noOptionsText: {
-    color: '#FF9800',
-    textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 16,
+  filterButton: {
+    position: 'absolute',
+    right: 16,
+    backgroundColor: '#FF9800',
+    padding: 12,
+    borderRadius: 50,
+    elevation: 5,
+    zIndex: 1000,
   },
-  separator: {
-    height: 1,
-    backgroundColor: '#555',
-    marginVertical: 10,
-  },
-  
-  
   feedContainer: {
-    paddingBottom: 16,
-    backgroundColor: '#000',
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   feedItem: {
     backgroundColor: '#1E1E1E',
     borderRadius: 15,
     padding: 16,
-    marginVertical: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 3,
+    marginBottom: 16,
   },
   image: {
     width: '100%',
@@ -481,32 +512,54 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   description: {
-    color: '#FFF',
     fontSize: 15,
+    color: '#FFF',
     lineHeight: 22,
     marginBottom: 8,
   },
   userHandle: {
-    color: '#9E9E9E',
     fontSize: 14,
+    color: '#9E9E9E',
     marginBottom: 6,
   },
   barName: {
-    color: '#FFA726',
     fontSize: 14,
+    color: '#FFA726',
     marginBottom: 6,
   },
   timestamp: {
-    color: '#BDBDBD',
     fontSize: 12,
-    marginBottom: 8,
+    color: '#BDBDBD',
     textAlign: 'right',
   },
   beerDetails: {
-    color: '#FFCC80',
     fontSize: 16,
+    color: '#FFCC80',
     fontWeight: 'bold',
     marginBottom: 6,
+  },
+  emptyFeedContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyIcon: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  noResultsText: {
+    fontSize: 20,
+    color: '#FF9800',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  suggestionText: {
+    fontSize: 16,
+    color: '#B0B0B0',
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -515,8 +568,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
   },
   loadingText: {
-    color: '#FF9800',
     fontSize: 16,
+    color: '#FF9800',
     marginTop: 10,
   },
 });
+

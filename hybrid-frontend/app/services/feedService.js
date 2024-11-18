@@ -23,23 +23,32 @@ const connectToWebSocket = async (onReceived) => {
   };
 
   ws.onmessage = (event) => {
-    const response = JSON.parse(event.data);
-    console.log('Mensaje recibido:', response);
+    try {
+      const response = JSON.parse(event.data);
+      console.log('Mensaje recibido:', response);
   
-    if (response.message) {
-      const { type } = response.message;
-  
-      if (type === 'event_post') {
-        console.log('Publicación de evento:', response.message);
-      } else if (type === 'beer_review') {
-        console.log('Reseña de cerveza:', response.message);
-      } else {
-        console.warn('Tipo desconocido:', type, response.message);
+      if (response.type === 'ping') {
+        // Manejo explícito de pings
+        console.log('Ping recibido:', response.message);
+        return; // Ignorar pings para el resto de la lógica
       }
-    } else {
-      console.warn('Mensaje sin contenido procesable:', response);
+  
+      if (response.message) {
+        const { type } = response.message;
+  
+        if (type === 'event_post') {
+          console.log('Publicación de evento:', response.message);
+        } else if (type === 'beer_review') {
+          console.log('Reseña de cerveza:', response.message);
+        } else {
+          console.warn('Tipo desconocido:', type, response.message);
+        }
+      }
+    } catch (error) {
+      console.error('Error procesando el mensaje WebSocket:', error);
     }
   };
+  
   
   
 

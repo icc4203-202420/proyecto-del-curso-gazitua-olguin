@@ -1,4 +1,9 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "jsx": "react-native", // Habilita JSX para React Native
+    "strict": true, // Opcional, para habilitar reglas estrictas de TypeScript
+    "allowJs": true, // Permite archivos JavaScript
+    "esModuleInterop": true // Facilita la interoperabilidad con módulos CommonJS
+  },
   "extends": "expo/tsconfig.base"
 }
