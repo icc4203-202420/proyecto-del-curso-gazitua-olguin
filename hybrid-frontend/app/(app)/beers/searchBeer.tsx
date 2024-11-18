@@ -51,14 +51,16 @@ export default function SearchBeer() {
         lightTheme
       />
       <FlatList
-        style={styles.Flatlist}
+        style={styles.flatList}
         data={filteredBeers}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('BeerDetails', { beerId: item.id })}>
             <View style={styles.beerItem}>
-              <Text style={styles.beerName}>{item.name}</Text>
-              <Text style={styles.beerStyle}>{item.style || 'Estilo no disponible'}</Text>
+              <View style={styles.beerDetails}>
+                <Text style={styles.beerName}>{item.name}</Text>
+                <Text style={styles.beerStyle}>{item.style || 'Estilo no disponible'}</Text>
+              </View>
             </View>
           </TouchableOpacity>
         )}
@@ -75,16 +77,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: '#000',
   },
-  searchBarContainer: { backgroundColor: '#000', borderBottomColor: 'transparent', borderTopColor: 'transparent' },
-  searchBarInput: { backgroundColor: '#1C1C1C' },
-  Flatlist: {
-    paddingTop: 16,
+  searchBarContainer: {
+    backgroundColor: '#000',
+    borderBottomColor: 'transparent',
+    borderTopColor: 'transparent',
+  },
+  searchBarInput: {
+    backgroundColor: '#1C1C1C',
+  },
+  flatList: {
+    marginTop: 16,
   },
   beerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 12,
     backgroundColor: '#1C1C1C',
     marginBottom: 10,
     borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  beerImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+  },
+  beerDetails: {
+    flex: 1,
   },
   beerName: {
     fontSize: 18,
@@ -104,5 +128,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     marginTop: 20,
+    fontSize: 16,
   },
 });

@@ -1,4 +1,3 @@
-// app/(app)/beers/[beerId].tsx
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -24,6 +23,7 @@ type Beer = {
   yeast?: string;
   maltes?: string;
   ibu?: string;
+  brewery?: { name: string };
   bars?: { id: string; name: string }[];
   reviews?: { id: string; rating: number; text: string; user: { handle: string } }[];
 };
@@ -49,6 +49,24 @@ export default function BeerDetails() {
     fetchBeerDetails();
   }, [beerId]);
 
+  const renderStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+    return (
+      <View style={styles.starsContainer}>
+        {Array.from({ length: fullStars }).map((_, i) => (
+          <Ionicons key={`full-${i}`} name="star" size={18} color="#FF9800" />
+        ))}
+        {halfStar && <Ionicons name="star-half" size={18} color="#FF9800" />}
+        {Array.from({ length: emptyStars }).map((_, i) => (
+          <Ionicons key={`empty-${i}`} name="star-outline" size={18} color="#FF9800" />
+        ))}
+      </View>
+    );
+  };
+
   if (loading) {
     return (
       <View style={styles.loading}>
@@ -64,13 +82,16 @@ export default function BeerDetails() {
 
   return (
     <View style={styles.container}>
-      {/* Header con el nombre y rating */}
+      {/* Header con nombre, brewery y rating */}
       <View style={styles.header}>
-        <Text style={styles.title}>{beer.name}</Text>
-        <View style={styles.ratingContainer}>
-          <Ionicons name="star" size={24} color="#FF9800" />
+        <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+          {beer.name}
+        </Text>
+        {beer.brewery?.name && <Text style={styles.brewery}>{beer.brewery.name}</Text>}
+        <View style={styles.ratingWrapper}>
+          {renderStars(beer.avg_rating || 0)}
           <Text style={styles.ratingText}>
-            {beer.avg_rating ? beer.avg_rating.toFixed(1) : 'N/A'} / 5
+            {beer.avg_rating ? beer.avg_rating.toFixed(1) : 'N/A'} 
           </Text>
         </View>
       </View>
@@ -81,7 +102,6 @@ export default function BeerDetails() {
           tabBarIndicatorStyle: { backgroundColor: '#FF9800' },
           tabBarLabelStyle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
           tabBarStyle: { backgroundColor: '#000' },
-          
         }}
       >
         <Tab.Screen name="Info" children={() => <BeerInfoTab beer={beer} />} />
@@ -102,10 +122,35 @@ export default function BeerDetails() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',padding: 16,},
-  title: { fontSize: 24, color: '#FF9800', fontWeight: 'bold' },
-  ratingContainer: { flexDirection: 'row', alignItems: 'center' },
-  ratingText: { fontSize: 18, color: '#FFFFFF', marginLeft: 8 },
+  header: {
+    padding: 16,
+    marginBottom: 8,
+    borderRadius: 8,
+  },
+  title: {
+    fontSize: 42,
+    color: '#FF9800',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  brewery: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  ratingWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    marginRight: 8,
+  },
+  ratingText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { fontSize: 18, color: '#FFFFFF', marginTop: 10 },
   errorText: { color: '#FFFFFF', textAlign: 'center', marginTop: 20 },

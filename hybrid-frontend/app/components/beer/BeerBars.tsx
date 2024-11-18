@@ -1,5 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Asegúrate de tener instalada esta librería
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'; // Asegúrate de tener instalada esta librería
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -37,6 +37,7 @@ export default function BeerBarsTab({ bars }) {
             }
           >
             <View style={styles.barItem}>
+              <MaterialIcons name="location-on" size={28} color="#FF9800" />
               <Text style={styles.barName}>{item.name}</Text>
             </View>
           </TouchableOpacity>
@@ -73,10 +74,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   barItem: {
-    padding: 10,
-    backgroundColor: '#1C1C1C',
-    marginVertical: 16,
-    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#2C2C2C',
+    borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,

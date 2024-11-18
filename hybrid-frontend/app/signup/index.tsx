@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Text, StyleSheet, ScrollView, Alert, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { signUp as signUpService } from '../services/authService';
@@ -30,16 +30,14 @@ const SignUp = () => {
         },
       };
 
-
       const response = await signUpService(userData);
 
       if (response?.status?.code === 200) {
-        // Mostrar mensaje de éxito y redirigir al login
         Alert.alert(
           'Registro exitoso',
           'Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión.',
           [
-            { text: 'OK', onPress: () => router.replace('/login') }, // Redirige al login
+            { text: 'OK', onPress: () => router.replace('/login') },
           ]
         );
       } else {
@@ -54,119 +52,131 @@ const SignUp = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Crea tu cuenta</Text>
+    <SafeAreaView style={styles.safeContainer}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <Text style={styles.title}>Crea tu cuenta</Text>
 
-      <FormInputController
-        name="firstName"
-        control={control}
-        rules={{ required: 'El nombre es obligatorio' }}
-        placeholder="Nombre"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="firstName"
+          control={control}
+          rules={{ required: 'El nombre es obligatorio' }}
+          placeholder="Nombre"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="lastName"
-        control={control}
-        rules={{ required: 'El apellido es obligatorio' }}
-        placeholder="Apellido"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="lastName"
+          control={control}
+          rules={{ required: 'El apellido es obligatorio' }}
+          placeholder="Apellido"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="email"
-        control={control}
-        rules={{
-          required: 'El correo es obligatorio',
-          pattern: { value: /^\S+@\S+$/i, message: 'Correo no válido' },
-        }}
-        placeholder="Correo electrónico"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="email"
+          control={control}
+          rules={{
+            required: 'El correo es obligatorio',
+            pattern: { value: /^\S+@\S+$/i, message: 'Correo no válido' },
+          }}
+          placeholder="Correo electrónico"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="handle"
-        control={control}
-        rules={{ required: 'El handle es obligatorio' }}
-        placeholder="Handle"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="handle"
+          control={control}
+          rules={{ required: 'El handle es obligatorio' }}
+          placeholder="Handle"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="password"
-        control={control}
-        rules={{ required: 'La contraseña es obligatoria' }}
-        placeholder="Contraseña"
-        secureTextEntry
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="password"
+          control={control}
+          rules={{ required: 'La contraseña es obligatoria' }}
+          placeholder="Contraseña"
+          secureTextEntry
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="passwordConfirmation"
-        control={control}
-        rules={{
-          required: 'Confirma tu contraseña',
-          validate: (value) =>
-            value === getValues('password') || 'Las contraseñas no coinciden',
-        }}
-        placeholder="Confirmar contraseña"
-        secureTextEntry
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="passwordConfirmation"
+          control={control}
+          rules={{
+            required: 'Confirma tu contraseña',
+            validate: (value) =>
+              value === getValues('password') || 'Las contraseñas no coinciden',
+          }}
+          placeholder="Confirmar contraseña"
+          secureTextEntry
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="line1"
-        control={control}
-        placeholder="Dirección línea 1"
-        inputStyle={styles.inputText}
-      />
+        <Text style={styles.optionalSectionTitle}>Datos opcionales</Text>
 
-      <FormInputController
-        name="line2"
-        control={control}
-        placeholder="Dirección línea 2"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="line1"
+          control={control}
+          placeholder="Dirección línea 1"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="city"
-        control={control}
-        placeholder="Ciudad"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="line2"
+          control={control}
+          placeholder="Dirección línea 2"
+          inputStyle={styles.inputText}
+        />
 
-      <FormInputController
-        name="countryId"
-        control={control}
-        placeholder="ID de País"
-        keyboardType="numeric"
-        inputStyle={styles.inputText}
-      />
+        <FormInputController
+          name="city"
+          control={control}
+          placeholder="Ciudad"
+          inputStyle={styles.inputText}
+        />
 
-      <GradientButton
-        onPress={handleSubmit(onSubmit)}
-        loading={loading}
-        containerStyle={{ marginTop: 20 }}
-      >
-        Registrarse
-      </GradientButton>
-    </ScrollView>
+        <FormInputController
+          name="countryId"
+          control={control}
+          placeholder="ID de País"
+          keyboardType="numeric"
+          inputStyle={styles.inputText}
+        />
+
+        <GradientButton
+          onPress={handleSubmit(onSubmit)}
+          loading={loading}
+          containerStyle={{ marginTop: 20 }}
+        >
+          Registrarse
+        </GradientButton>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
-    flexGrow: 1,
-    padding: 20,
-    justifyContent: 'center',
     backgroundColor: '#000',
   },
+  container: {
+    padding: 20,
+    justifyContent: 'center',
+  },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     textAlign: 'left',
     marginBottom: 20,
-    color: '#FFC107',
+    color: '#FF9800',
+    fontWeight: 'bold',
+  },
+  optionalSectionTitle: {
+    fontSize: 20,
+    color: '#FF9800',
+    marginTop: 20,
+    marginBottom: 10,
     fontWeight: 'bold',
   },
   inputText: {

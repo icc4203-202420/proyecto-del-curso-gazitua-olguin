@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSession } from '../../hooks/useSession';
 import { login as loginService } from '../services/authService';
@@ -44,61 +44,75 @@ const LoginPage = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar Sesión</Text>
+    <SafeAreaView style={styles.safeContainer}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Iniciar Sesión</Text>
+        
+        <AuthInputController
+          value={email}
+          setValue={setEmail}
+          placeholder="Correo electrónico"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          inputStyle={styles.inputText}
+        />
 
-      <AuthInputController
-        value={email}
-        setValue={setEmail}
-        placeholder="Correo electrónico"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        inputStyle={styles.inputText}
-      />
-      <AuthInputController
-        value={password}
-        setValue={setPassword}
-        placeholder="Contraseña"
-        secureTextEntry
-        inputStyle={styles.inputText}
-      />
+        <AuthInputController
+          value={password}
+          setValue={setPassword}
+          placeholder="Contraseña"
+          secureTextEntry
+          inputStyle={styles.inputText}
+        />
 
-      <GradientButton onPress={handleLogin} loading={loading}>
-        Entrar
-      </GradientButton>
+        <GradientButton onPress={handleLogin} loading={loading} containerStyle={styles.button}>
+          Entrar
+        </GradientButton>
 
-      <TouchableOpacity onPress={() => router.push('/signup')}>
-        <Text style={styles.signupText}>¿No tienes cuenta? Regístrate</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity onPress={() => router.push('/signup')}>
+          <Text style={styles.signupText}>¿No tienes cuenta? Regístrate</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: '10%',
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 28,
+    marginBottom: 30,
     color: '#FF9800',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   signupText: {
-    marginTop: 15,
+    marginTop: 20,
     fontSize: 16,
-    color: '#fff',
+    color: '#FF9800',
+    textDecorationLine: 'underline',
+  },
+  forgotPasswordText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#FFFFFF',
     textDecorationLine: 'underline',
   },
   inputText: {
-    color: '#fff',
+    color: '#FFFFFF',
   },
-  inputStyle: {
-    color: '#fff'
-  }
+  button: {
+    marginTop: 30,
+  },
 });
 
 export default LoginPage;

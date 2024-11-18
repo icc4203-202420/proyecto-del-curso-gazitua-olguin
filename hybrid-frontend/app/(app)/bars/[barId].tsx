@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import api from '../../services/api';
 import BarBeersTab from '../../components/bar/BarBeers';
@@ -53,11 +54,28 @@ export default function BarDetails() {
     return <Text style={styles.errorText}>No se encontraron detalles para este bar.</Text>;
   }
 
+  const renderAddress = (address) => {
+    if (!address) return <Text style={styles.noAddress}>Dirección no disponible</Text>;
+
+    const { line1, line2, city } = address;
+    const formattedAddress = [line1, line2, city].filter(Boolean).join(', ');
+
+    return (
+      <View style={styles.addressContainer}>
+        <MaterialIcons name="location-on" size={20} color="#FF9800" />
+        <Text style={styles.address}>{formattedAddress}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header con el nombre del bar */}
+      {/* Header con el nombre del bar y dirección */}
       <View style={styles.header}>
-        <Text style={styles.title}>{bar.name}</Text>
+        <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+          {bar.name}
+        </Text>
+        {renderAddress(bar.address)}
       </View>
 
       {/* Configuración del Top Tab Navigator */}
@@ -77,9 +95,47 @@ export default function BarDetails() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  header: { padding: 16 },
-  title: { fontSize: 24, color: '#FF9800', fontWeight: 'bold' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { fontSize: 18, color: '#FFFFFF', marginTop: 10 },
-  errorText: { color: '#FFFFFF', textAlign: 'center', marginTop: 20 },
+  header: {
+    padding: 16,
+    marginHorizontal: 16,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 42,
+    color: '#FF9800',
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  addressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  address: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginLeft: 8,
+    textAlign: 'center',
+  },
+  noAddress: {
+    fontSize: 16,
+    color: '#FF9800',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    fontSize: 18,
+    color: '#FFFFFF',
+    marginTop: 10,
+  },
+  errorText: {
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginTop: 20,
+  },
 });

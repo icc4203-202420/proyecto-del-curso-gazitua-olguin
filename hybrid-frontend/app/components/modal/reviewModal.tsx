@@ -8,11 +8,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSession } from '../../../hooks/useSession';
 import api from '../../services/api';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Para los íconos de cerveza
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ReviewModal() {
   const route = useRoute();
@@ -26,7 +27,7 @@ export default function ReviewModal() {
   }
 
   const { session } = useSession();
-  const [rating, setRating] = useState(3); // Valor inicial del rating
+  const [rating, setRating] = useState(3);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -63,7 +64,7 @@ export default function ReviewModal() {
 
       Alert.alert('Éxito', 'Reseña enviada correctamente.');
       setText('');
-      setRating(3); // Reiniciamos el valor del rating
+      setRating(3);
       navigation.goBack();
     } catch (error) {
       const errorMessage = error?.response?.data?.message || 'No se pudo enviar la reseña.';
@@ -79,10 +80,10 @@ export default function ReviewModal() {
       return (
         <TouchableWithoutFeedback key={index} onPress={() => setRating(index + 1)}>
           <MaterialCommunityIcons
-            name={filled ? 'beer' : 'beer-outline'}
+            name={filled ? 'star' : 'star-outline'}
             size={40}
             color={filled ? '#FFD700' : '#999'}
-            style={{ marginHorizontal: 4 }}
+            style={styles.beerIcon}
           />
         </TouchableWithoutFeedback>
       );
@@ -98,28 +99,34 @@ export default function ReviewModal() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Califica la Cerveza</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Reseñar Cerveza</Text>
 
-      <View style={styles.beersContainer}>
-        <View style={styles.beers}>{renderBeers()}</View>
+        {/* Estrellas */}
+        <Text style={styles.subtitle}>Tu puntuación</Text>
+        <View style={styles.beersContainer}>
+          <View style={styles.beers}>{renderBeers()}</View>
+        </View>
+
+        {/* Input para la reseña */}
+        <TextInput
+          style={styles.input}
+          placeholder="Escribe tu reseña (mínimo 15 palabras)"
+          placeholderTextColor="#999"
+          multiline
+          numberOfLines={4}
+          maxLength={300}
+          value={text}
+          onChangeText={setText}
+        />
+
+        {/* Botón de enviar */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Enviar Reseña</Text>
+        </TouchableOpacity>
       </View>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Escribe tu reseña"
-        placeholderTextColor="#999"
-        multiline
-        numberOfLines={4}
-        maxLength={300}
-        value={text}
-        onChangeText={setText}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Enviar Reseña</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -133,33 +140,39 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 20,
     textAlign: 'center',
-    color: '#fff',
+    color: '#FF9800',
+    marginBottom: 20,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   beersContainer: {
     alignItems: 'center',
     marginBottom: 20,
   },
-  ratingText: {
-    fontSize: 18,
-    color: '#fff',
-    marginBottom: 10,
-  },
   beers: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  beerIcon: {
+    marginHorizontal: 6,
+  },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#333',
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#1C1C1C',
+    color: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 3,
   },
@@ -176,7 +189,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -184,6 +197,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#000',
   },
 });

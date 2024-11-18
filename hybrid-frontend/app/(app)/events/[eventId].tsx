@@ -1,5 +1,3 @@
-// app/(app)/events/[eventId].tsx
-
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
@@ -60,7 +58,7 @@ export default function EventDetails() {
   const handleCheckIn = async () => {
     try {
       await api.post(`/events/${eventId}/check_in`);
-      setIsAttending(true); 
+      setIsAttending(true);
     } catch (error) {
       console.error('Error al confirmar asistencia:', error);
     }
@@ -76,20 +74,25 @@ export default function EventDetails() {
 
   return (
     <View style={styles.container}>
-      {/* Header con el nombre del evento y botón de asistencia */}
+      {/* Header con el nombre del evento, fecha y botón de asistencia */}
       <View style={styles.header}>
-        <Text style={styles.title}>{event.name}</Text>
+        <View style={styles.headerContent}>
+          <Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+            {event.name}
+          </Text>
+
+        </View>
         {isAttending ? (
           <View style={styles.attendanceBadge}>
             <Text style={styles.attendanceConfirmed}>Asistencia confirmada</Text>
           </View>
         ) : (
           <TouchableOpacity onPress={handleCheckIn} style={styles.attendButton}>
-            <Text style={styles.attendButtonText}>Confirmar asistencia</Text>
+            <Text style={styles.attendButtonText}>Asistir</Text>
           </TouchableOpacity>
         )}
       </View>
-      
+
       {/* Tab Navigator */}
       <Tab.Navigator
         screenOptions={{
@@ -103,33 +106,38 @@ export default function EventDetails() {
         <Tab.Screen name="Fotos" children={() => <EventPictures eventId={eventId} key={`tab-pictures-${eventId}`} />} />
       </Tab.Navigator>
 
-
-        {/* Botón flotante para abrir el modal */}
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={() => navigation.navigate('addpictureModal', { eventId })}
-        >
-          <Ionicons name="add-circle" size={60} color="#FF9800" />
-        </TouchableOpacity>
+      {/* Botón flotante para abrir el modal */}
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={() => navigation.navigate('addpictureModal', { eventId })}
+      >
+        <Ionicons name="add-circle" size={60} color="#FF9800" />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' }, 
+  container: { flex: 1, backgroundColor: '#000' },
   header: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
+  },
+  headerContent: {
+    flex: 1,
+    marginRight: 16,
   },
   title: {
-    flex: 1,
-    fontSize: 24,
+    fontSize: 42,
     color: '#FF9800',
     fontWeight: 'bold',
-    textAlign: 'center',
+  },
+  date: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginTop: 4,
   },
   attendanceBadge: {
     backgroundColor: '#2C2C2C',
@@ -137,17 +145,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 16,
   },
-  attendanceConfirmed: { color: '#FF9800', fontSize: 16, fontWeight: '600' },
+  attendanceConfirmed: {
+    color: '#FF9800',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   attendButton: {
     backgroundColor: '#FF9800',
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
     elevation: 2,
   },
-  attendButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '500' },
+  attendButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+  },
   loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   errorText: { color: '#FFFFFF', textAlign: 'center', marginTop: 20 },
   floatingButton: { position: 'absolute', bottom: 20, right: 20 },
 });
-

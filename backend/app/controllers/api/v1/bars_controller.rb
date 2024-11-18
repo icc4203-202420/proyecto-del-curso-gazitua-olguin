@@ -17,18 +17,21 @@ class API::V1::BarsController < ApplicationController
     if @bar.image.attached?
       render json: @bar.as_json(include: { 
         beers: { only: [:id, :name, :style] }, 
-        events: { only: [:id, :name, :date, :description] } 
+        events: { only: [:id, :name, :date, :description] }, 
+        address: { only: [:line1, :line2, :city] } 
       }).merge({ 
         image_url: url_for(@bar.image), 
-        thumbnail_url: url_for(@bar.thumbnail) }),
-        status: :ok
+        thumbnail_url: url_for(@bar.thumbnail) 
+      }), status: :ok
     else
       render json: @bar.as_json(include: { 
         beers: { only: [:id, :name, :style] }, 
-        events: { only: [:id, :name, :date, :description] } 
+        events: { only: [:id, :name, :date, :description] }, 
+        address: { only: [:line1, :line2, :city] }
       }), status: :ok
     end
   end
+  
 
   def create
     @bar = Bar.new(bar_params.except(:image_base64))

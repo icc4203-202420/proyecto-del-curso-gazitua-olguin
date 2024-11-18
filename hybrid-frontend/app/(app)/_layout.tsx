@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect, useRouter } from 'expo-router';
 import { useSession } from '../../hooks/useSession';
-import HomePage from './index';
 import UserPage from './profile';
 import BeersLayout from './beers/_layout'; // Incluye BeersLayout
 import BarsLayout from './bars/_layout'; // Incluye BarsLayout
@@ -46,25 +45,22 @@ function MainTabs() {
             let iconName;
 
             switch (route.name) {
-              case 'Home':
-                iconName = focused ? 'home' : 'home-outline';
-                break;
               case 'Feed':
                 iconName = focused ? 'newspaper' : 'newspaper-outline';
                 break;
-              case 'Me':
+              case 'Yo':
                 iconName = focused ? 'person' : 'person-outline';
                 break;
-              case 'Users':
+              case 'Usuarios':
                 iconName = focused ? 'search' : 'search-outline';
                 break;
-              case 'Beers':
+              case 'Cervezas':
                 iconName = focused ? 'beer' : 'beer-outline';
                 break;
               case 'Bars':
                 iconName = focused ? 'location' : 'location-outline';
                 break;
-              case 'Events':
+              case 'Eventos':
                 iconName = focused ? 'calendar' : 'calendar-outline';
                 break;
               default:
@@ -76,22 +72,21 @@ function MainTabs() {
           tabBarActiveTintColor: '#FF9800',
           tabBarInactiveTintColor: 'gray',
           headerShown: false,
-          tabBarHideOnKeyboard: true, // Oculta el Tab Bar al abrir el teclado
+          tabBarHideOnKeyboard: true, 
           tabBarStyle: {
             bottom: 0,
             height: 60,
-            backgroundColor: '#1C1C1C', // Fondo oscuro para el Tab Bar
-            borderTopWidth: 0, // Elimina la línea superior
+            backgroundColor: '#1C1C1C', 
+            borderTopWidth: 0, 
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomePage} />
         <Tab.Screen name="Feed" component={FeedPage} />
-        <Tab.Screen name="Beers" component={BeersLayout} />
+        <Tab.Screen name="Cervezas" component={BeersLayout} />
         <Tab.Screen name="Bars" component={BarsLayout} />
-        <Tab.Screen name="Events" component={EventsLayout} />
-        <Tab.Screen name="Users" component={UsersLayout} />
-        <Tab.Screen name="Me" component={UserPage} />
+        <Tab.Screen name="Eventos" component={EventsLayout} />
+        <Tab.Screen name="Usuarios" component={UsersLayout} />
+        <Tab.Screen name="Yo" component={UserPage} />
       </Tab.Navigator>
     </KeyboardAvoidingView>
   );
