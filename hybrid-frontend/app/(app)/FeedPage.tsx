@@ -170,7 +170,7 @@ export default function FeedPage() {
             {item.description || 'Sin descripción'}
           </Text>
           <Text style={styles.beerDetails}>
-            {item.beer_details?.name} ({item.beer_details?.avg_rating || 'N/A'}/5)
+            {item.beer_details?.name} ({item.beer_details?.avg_rating?.toFixed(1) || 'N/A'}/5)
           </Text>
           <Text style={styles.barName}>
             {item.bar_name || 'No bar info'}, {item.country || 'No country info'}
