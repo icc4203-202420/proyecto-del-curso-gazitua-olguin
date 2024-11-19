@@ -84,7 +84,7 @@ export default function EventDetails() {
         </View>
         {isAttending ? (
           <View style={styles.attendanceBadge}>
-            <Text style={styles.attendanceConfirmed}>Asistencia confirmada</Text>
+            <Text style={styles.attendanceConfirmed}>confirmadx</Text>
           </View>
         ) : (
           <TouchableOpacity onPress={handleCheckIn} style={styles.attendButton}>

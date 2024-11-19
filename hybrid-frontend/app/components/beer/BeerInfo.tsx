@@ -43,12 +43,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#FF9800',
     fontWeight: 'bold',
   },
   value: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#FFFFFF',
   },
   valueUnavailable: {
