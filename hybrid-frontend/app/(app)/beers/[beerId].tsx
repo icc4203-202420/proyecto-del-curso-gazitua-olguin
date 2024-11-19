@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { EventRegister } from 'react-native-event-listeners';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
@@ -34,20 +35,47 @@ export default function BeerDetails() {
   const navigation = useNavigation();
   const [beer, setBeer] = useState<Beer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchBeerDetails = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      const response = await api.get(`/beers/${beerId}`);
+      if (response.data && response.data.beer) {
+        setBeer(response.data.beer);
+      }
+    } catch (error) {
+      console.error('Error al cargar los detalles de la cerveza:', error);
+      Alert.alert(
+        'Error',
+        'No se pudieron cargar los detalles. Por favor, intenta de nuevo.'
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [beerId]);
 
   useEffect(() => {
-    const fetchBeerDetails = async () => {
-      try {
-        const response = await api.get(`/beers/${beerId}`);
-        setBeer(response.data.beer);
-      } catch (error) {
-        console.error('Error al cargar los detalles de la cerveza:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBeerDetails();
-  }, [beerId]);
+
+    // Suscribirse al evento de actualización
+    const listener = EventRegister.addEventListener('reviewAdded', async (reviewedBeerId) => {
+      if (reviewedBeerId === beerId) {
+        // Pequeño delay para asegurar que el backend está actualizado
+        setTimeout(() => {
+          fetchBeerDetails();
+        }, 500);
+      }
+    });
+
+    // Limpieza al desmontar
+    return () => {
+      EventRegister.removeEventListener(listener);
+    };
+  }, [beerId, fetchBeerDetails]);
+
+
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -106,7 +134,16 @@ export default function BeerDetails() {
       >
         <Tab.Screen name="Info" children={() => <BeerInfoTab beer={beer} />} />
         <Tab.Screen name="Bars" children={() => <BeerBarsTab bars={beer.bars} />} />
-        <Tab.Screen name="Reseñas" children={() => <BeerReviewsTab reviews={beer.reviews} />} />
+        <Tab.Screen 
+          name="Reseñas" 
+          children={() => (
+            <BeerReviewsTab 
+              reviews={beer?.reviews} 
+              refreshing={refreshing}
+              onRefresh={fetchBeerDetails}
+            />
+          )} 
+        />
       </Tab.Navigator>
 
       {/* Botón flotante para abrir el modal */}

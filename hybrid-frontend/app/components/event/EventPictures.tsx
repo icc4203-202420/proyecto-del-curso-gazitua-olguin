@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { EventRegister } from 'react-native-event-listeners';
 import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import api from '../../services/api';
@@ -22,25 +23,47 @@ type EventPicturesTabProps = {
 const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
   const [pictures, setPictures] = useState<EventPicture[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+    const fetchPictures = async () => {
+    try {
+      const response = await api.get(`/events/${eventId}/pictures`);
+      setPictures(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setPictures([]);
+      } else {
+        console.error('Error al cargar las fotos del evento:', error);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPictures = async () => {
-      try {
-        const response = await api.get(`/events/${eventId}/pictures`);
-        setPictures(response.data);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setPictures([]);
-        } else {
-          console.error('Error al cargar las fotos del evento:', error);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPictures();
+
+    // Agregar listener para cuando se sube una nueva foto
+    const listener = EventRegister.addEventListener('pictureAdded', (updatedEventId) => {
+      if (updatedEventId === eventId) {
+        // Pequeño delay para asegurar que el backend está actualizado
+        setTimeout(() => {
+          fetchPictures();
+        }, 500);
+      }
+    });
+
+    return () => {
+      // Limpiar listener cuando el componente se desmonta
+      EventRegister.removeEventListener(listener as string);
+    };
   }, [eventId]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchPictures();
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#FF9800" style={styles.loadingIndicator} />;
@@ -62,11 +85,13 @@ const EventPicturesTab = ({ eventId }: EventPicturesTabProps) => {
   return (
     <View style={styles.emptyContainer}>
       <FlatList
-      data={pictures}
-      keyExtractor={(item) => item.id.toString()}
-      numColumns={numColumns}
-      contentContainerStyle={styles.grid}
-      renderItem={({ item }) => (
+        data={pictures}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        contentContainerStyle={styles.grid}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        renderItem={({ item }) =>(
         <View style={styles.pictureContainer}>
           <Image source={{ uri: item.image_url }} style={[styles.image, { width: imageSize, height: imageSize }]} />
           <View style={styles.detailsContainer}>

@@ -1,11 +1,13 @@
+import { EventRegister } from 'react-native-event-listeners';
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, TextInput, Image, StyleSheet, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../../services/api';
 
 const SharePhoto = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const { eventId } = route.params || {};
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [tags, setTags] = useState('');
@@ -51,10 +53,20 @@ const SharePhoto = () => {
     });
 
     try {
-      await api.post(`/events/${eventId}/event_pictures`, formData, {
+      const response = await api.post(`/events/${eventId}/event_pictures`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      Alert.alert('Éxito', 'Foto subida exitosamente');
+      // Emitir evento después de subir la foto exitosamente
+      EventRegister.emit('pictureAdded', eventId);
+      
+      // Primero navegamos hacia atrás
+      navigation.goBack();
+      
+      // Luego mostramos la alerta de éxito
+      setTimeout(() => {
+        Alert.alert('Éxito', 'Foto subida exitosamente');
+      }, 100);
+      
       setImageUri(null);
       setTags('');
       setDescription('');

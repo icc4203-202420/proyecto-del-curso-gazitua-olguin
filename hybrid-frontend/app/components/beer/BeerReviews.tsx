@@ -2,7 +2,22 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function BeerReviewsTab({ reviews }) {
+type BeerReviewsTabProps = {
+  reviews?: Array<{
+    id: string;
+    rating: number;
+    text: string;
+    user: { handle: string };
+  }>;
+  refreshing?: boolean;
+  onRefresh?: () => void;
+};
+
+export default function BeerReviewsTab({ 
+  reviews, 
+  refreshing = false,
+  onRefresh 
+}: BeerReviewsTabProps) {
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
@@ -35,23 +50,25 @@ export default function BeerReviewsTab({ reviews }) {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={reviews}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.reviewItem}>
-            <View style={styles.headerWrapper}>
-              <Text style={styles.reviewUser}>@{item.user.handle}</Text>
-              <View style={styles.ratingWrapper}>
-                {renderStars(item.rating || 0)}
-                <Text style={styles.ratingText}>{item.rating}</Text>
+          <FlatList
+            data={reviews}
+            keyExtractor={(item) => item.id}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            renderItem={({ item }) => (
+              <View style={styles.reviewItem}>
+                <View style={styles.headerWrapper}>
+                  <Text style={styles.reviewUser}>@{item.user.handle}</Text>
+                  <View style={styles.ratingWrapper}>
+                    {renderStars(item.rating || 0)}
+                    <Text style={styles.ratingText}>{item.rating}</Text>
+                  </View>
+                </View>
+                <Text style={styles.reviewText}>{item.text}</Text>
               </View>
-            </View>
-            <Text style={styles.reviewText}>{item.text}</Text>
-          </View>
-        )}
-      />
-    </View>
+            )}
+          />
+        </View>
   );
 }
   const styles = StyleSheet.create({

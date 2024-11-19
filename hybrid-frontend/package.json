@@ -34,6 +34,7 @@
     "react": "18.2.0",
     "react-hook-form": "^7.53.0",
     "react-native": "0.74.5",
+    "react-native-event-listeners": "^1.0.7",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-pager-view": "^6.3.0",
     "react-native-paper": "^5.12.5",
@@ -42,6 +43,7 @@
     "react-native-screens": "^3.31.1",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-video": "^6.8.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

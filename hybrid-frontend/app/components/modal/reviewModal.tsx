@@ -14,22 +14,22 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { useSession } from '../../../hooks/useSession';
 import api from '../../services/api';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { EventRegister } from 'react-native-event-listeners';
 
 export default function ReviewModal() {
   const route = useRoute();
   const navigation = useNavigation();
   const { beerId } = route.params || {};
-
+  const { session } = useSession();
+  const [rating, setRating] = useState(3);
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+  
   if (!beerId) {
     Alert.alert('Error', 'No se encontró la cerveza a reseñar.');
     navigation.goBack();
     return null;
   }
-
-  const { session } = useSession();
-  const [rating, setRating] = useState(3);
-  const [text, setText] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (text.split(/\s+/).length < 15) {
@@ -65,14 +65,29 @@ export default function ReviewModal() {
       Alert.alert('Éxito', 'Reseña enviada correctamente.');
       setText('');
       setRating(3);
-      navigation.goBack();
+      if (response.data) {
+        // Emitir el evento después de confirmar que la reseña se guardó
+        EventRegister.emit('reviewAdded', beerId);
+        
+        // Primero navegamos hacia atrás
+        navigation.goBack();
+        
+        // Luego mostramos la alerta de éxito
+        setTimeout(() => {
+          Alert.alert('Éxito', 'Reseña enviada correctamente.');
+        }, 100);
+      }
     } catch (error) {
-      const errorMessage = error?.response?.data?.message || 'No se pudo enviar la reseña.';
+      console.error('Error al enviar la reseña:', error);
+      const errorMessage = 
+        error?.response?.data?.message || 
+        'No se pudo enviar la reseña. Por favor, inténtalo de nuevo.';
       Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
 
   const renderBeers = () => {
     return Array.from({ length: 5 }, (_, index) => {
